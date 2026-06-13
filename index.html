@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Knowledge Box — Scan, Pick a Stream, Listen</title>
+<style>
+  :root{
+    --ink:#1B2A4A;
+    --paper:#F7F3E9;
+    --coral:#E8633C;
+    --sage:#8FA68E;
+    --charcoal:#2A2A2A;
+    --line: rgba(27,42,74,0.15);
+    --card: #FFFFFF;
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+
+  body{
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background:var(--paper);
+    color:var(--charcoal);
+    -webkit-font-smoothing:antialiased;
+  }
+
+  h1,h2,h3,.display{
+    font-family: Georgia, 'Times New Roman', serif;
+    letter-spacing:-0.01em;
+  }
+
+  /* ====== TOP BAR ====== */
+  header{
+    position:sticky; top:0; z-index:50;
+    background:var(--ink); color:var(--paper);
+    padding:14px 18px;
+    display:flex; align-items:center; justify-content:space-between;
+    border-bottom:3px solid var(--coral);
+  }
+  .brand{ display:flex; align-items:center; gap:10px; }
+  .brand .mark{
+    width:34px; height:34px; border-radius:6px;
+    background:var(--coral);
+    display:flex; align-items:center; justify-content:center;
+    font-family:Georgia,serif; font-weight:bold; font-size:18px; color:var(--ink);
+    transform:rotate(-4deg);
+  }
+  .brand .name{ font-family:Georgia,serif; font-size:1.25rem; font-weight:700; }
+  .brand .tag{ font-size:0.65rem; opacity:0.7; letter-spacing:0.08em; text-transform:uppercase; }
+
+  .lang-select{
+    background:transparent; color:var(--paper); border:1px solid rgba(247,243,233,0.35);
+    border-radius:20px; padding:6px 12px; font-size:0.8rem; font-weight:600;
+    cursor:pointer;
+  }
+  .lang-select:focus{ outline:2px solid var(--coral); }
+  .lang-select option{ color:var(--charcoal); }
+
+  /* ====== HERO (e-Granthalay style banner) ====== */
+  .hero{
+    text-align:center;
+    background: linear-gradient(180deg, #CFE3EE 0%, #CFE3EE 55%, var(--paper) 55%);
+    padding:30px 18px 26px;
+  }
+  .hero .crest{
+    width:84px; height:84px; margin:0 auto 14px;
+    border-radius:50%;
+    background:var(--paper);
+    border:3px solid #fff;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 6px 18px -8px rgba(27,42,74,0.4);
+  }
+  .hero .crest svg{ width:44px; height:44px; }
+  .hero h1{
+    font-size:1.7rem; color:var(--ink); margin-bottom:10px;
+  }
+  .hero .badge{
+    display:inline-block;
+    font-size:0.72rem; font-weight:700; color:var(--coral);
+    border:1px solid var(--coral); border-radius:999px;
+    padding:3px 14px; margin-bottom:12px;
+  }
+  .hero p.sub{
+    font-size:0.85rem; color:#555; max-width:440px; margin:0 auto;
+    line-height:1.65; text-align:left;
+  }
+
+  /* ====== STREAM LIST (home page list, e-Granthalay style) ====== */
+  .stream-list{
+    max-width:520px; margin:0 auto; padding:6px 18px 8px;
+  }
+  .stream-row{
+    display:flex; align-items:center; justify-content:space-between;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:14px 18px;
+    margin-bottom:10px;
+    cursor:pointer;
+    transition:border-color .15s ease, transform .1s ease;
+  }
+  .stream-row:hover{ border-color:var(--coral); transform:translateX(2px); }
+  .stream-row.active{ border-color:var(--ink); background:rgba(27,42,74,0.04); }
+  .stream-row .label{
+    display:flex; align-items:center; gap:12px;
+    font-size:0.98rem; font-weight:600; color:var(--ink);
+  }
+  .stream-row .label .icon{ font-size:1.2rem; }
+  .stream-row .arrow{ color:var(--coral); font-size:1.1rem; }
+
+  .scan-locations{
+    display:flex; flex-wrap:wrap; gap:8px; justify-content:center;
+    margin-top:18px; max-width:520px; margin-left:auto; margin-right:auto; padding:0 18px;
+  }
+  .loc-pill{
+    font-size:0.72rem; font-weight:600; color:var(--ink);
+    background:rgba(143,166,142,0.25);
+    border:1px solid rgba(143,166,142,0.5);
+    padding:5px 12px; border-radius:999px;
+  }
+
+  /* ====== SECTION HEADERS ====== */
+  .section{ padding:30px 18px; max-width:760px; margin:0 auto; }
+  .section-head{
+    display:flex; align-items:baseline; justify-content:space-between;
+    margin-bottom:16px; gap:10px; flex-wrap:wrap;
+  }
+  .section-head h2{ font-size:1.35rem; color:var(--ink); }
+  .section-head .eyebrow{
+    font-size:0.68rem; text-transform:uppercase; letter-spacing:0.2em;
+    color:var(--sage); font-weight:700;
+  }
+
+  /* ====== CHIP (used for back button) ====== */
+  .chip{
+    flex:0 0 auto;
+    font-size:0.8rem; font-weight:600; color:var(--ink);
+    background:var(--card); border:1px solid var(--line);
+    padding:8px 16px; border-radius:999px; cursor:pointer;
+    white-space:nowrap;
+    transition:all .15s ease;
+  }
+  .chip:hover{ border-color:var(--ink); }
+
+  /* ====== TICKET / TALK CARDS ====== */
+  .grid{
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(280px,1fr));
+    gap:16px;
+  }
+
+  .ticket{
+    position:relative;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:14px;
+    overflow:hidden;
+    display:flex;
+    box-shadow:0 8px 20px -16px rgba(27,42,74,0.5);
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .ticket:hover{ transform:translateY(-2px); box-shadow:0 14px 28px -16px rgba(27,42,74,0.45); }
+
+  .ticket .stub{
+    flex:0 0 78px;
+    background:var(--ink);
+    color:var(--paper);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:6px; padding:10px 6px;
+    position:relative;
+  }
+  /* perforation effect between stub and body */
+  .ticket .stub::after{
+    content:"";
+    position:absolute; right:-1px; top:0; bottom:0; width:0;
+    border-right:2px dotted rgba(247,243,233,0.4);
+  }
+  .ticket .stub .mins{
+    font-family:Georgia,serif; font-size:1.5rem; font-weight:700; line-height:1;
+  }
+  .ticket .stub .minslabel{ font-size:0.6rem; text-transform:uppercase; letter-spacing:0.1em; opacity:0.75; }
+  .ticket .stub .stamp{
+    margin-top:6px;
+    font-size:0.6rem; font-weight:700; text-transform:uppercase;
+    border:1px solid rgba(247,243,233,0.5);
+    border-radius:5px; padding:2px 5px; letter-spacing:0.05em;
+    transform:rotate(-8deg);
+  }
+
+  .ticket .body{
+    flex:1; padding:14px 16px; display:flex; flex-direction:column; gap:6px;
+  }
+  .ticket .stream-tag{
+    font-size:0.65rem; font-weight:700; text-transform:uppercase; letter-spacing:0.12em;
+    color:var(--coral);
+  }
+  .ticket h3{ font-size:1.02rem; color:var(--ink); line-height:1.3; }
+  .ticket .desc{ font-size:0.82rem; color:#666; line-height:1.4; }
+  .ticket .meta{
+    display:flex; gap:8px; margin-top:auto; padding-top:8px; flex-wrap:wrap;
+  }
+  .meta-tag{
+    font-size:0.68rem; font-weight:600; color:var(--ink);
+    background:rgba(143,166,142,0.22); border-radius:6px; padding:3px 8px;
+  }
+  .play-btn{
+    align-self:flex-start; margin-top:8px;
+    background:var(--coral); color:#fff; border:none;
+    font-weight:700; font-size:0.78rem;
+    padding:8px 16px; border-radius:999px; cursor:pointer;
+    display:flex; align-items:center; gap:6px;
+    transition:background .15s ease;
+    text-decoration:none;
+  }
+  .play-btn:hover{ background:#cf5230; }
+  .play-btn svg{ width:12px; height:12px; }
+
+  .inline-player{
+    margin-top:10px; border-radius:10px; overflow:hidden;
+    background:#000; display:none;
+  }
+  .inline-player.open{ display:block; }
+  .inline-player iframe{
+    display:block; width:100%; height:160px; border:0;
+  }
+  .player-note{
+    font-size:0.68rem; color:#999; margin-top:6px; line-height:1.4;
+  }
+  .player-note a{ color:var(--coral); text-decoration:none; font-weight:600; }
+
+  /* ====== HOW IT WORKS ====== */
+  .how{
+    background:var(--ink); color:var(--paper); padding:40px 18px;
+  }
+  .how-inner{ max-width:760px; margin:0 auto; }
+  .how h2{ font-size:1.35rem; margin-bottom:22px; }
+  .steps{ display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:18px; }
+  .step{
+    border-left:3px solid var(--coral); padding-left:14px;
+  }
+  .step .num{
+    font-family:Georgia,serif; font-size:1.6rem; color:var(--coral); display:block; margin-bottom:4px;
+  }
+  .step h3{ font-size:0.95rem; margin-bottom:4px; font-family:Georgia,serif; }
+  .step p{ font-size:0.8rem; opacity:0.78; line-height:1.4; }
+
+  /* ====== FOOTER ====== */
+  footer{
+    text-align:center; padding:28px 18px; font-size:0.75rem; color:#999;
+  }
+  footer span{ color:var(--coral); font-weight:700; }
+
+  @media (max-width:480px){
+    .hero h1{ font-size:1.55rem; }
+    .ticket{ flex-direction:row; }
+    .ticket .stub{ flex:0 0 64px; }
+    .ticket .stub .mins{ font-size:1.2rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="mark">KB</div>
+    <div>
+      <div class="name">Knowledge Box</div>
+      <div class="tag">Scan. Listen. Learn.</div>
+    </div>
+  </div>
+  <select class="lang-select" id="langSelect" aria-label="Choose language">
+    <option value="en">English</option>
+    <option value="hi">हिन्दी</option>
+    <option value="mr">मराठी</option>
+    <option value="es">Español</option>
+    <option value="fr">Français</option>
+  </select>
+</header>
+
+<section class="hero">
+  <div class="crest">
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <path d="M50 20 L60 28 L60 70 L50 65 L40 70 L40 28 Z" fill="#1B2A4A"/>
+      <circle cx="35" cy="22" r="3" fill="#E8633C"/>
+      <circle cx="65" cy="22" r="3" fill="#E8633C"/>
+      <circle cx="50" cy="14" r="3" fill="#E8633C"/>
+      <circle cx="22" cy="30" r="3" fill="#E8633C"/>
+      <circle cx="78" cy="30" r="3" fill="#E8633C"/>
+    </svg>
+  </div>
+  <div class="badge" data-i18n="badge">अभिनव उपक्रम</div>
+  <h1 data-i18n="heroTitle">ज्ञान-पेटी</h1>
+  <p class="sub" data-i18n="heroSub">
+    या क्यूआर (QR) कोडद्वारे उपलब्ध करून दिलेले सर्व व्याख्याने (Talks) आणि पॉडकास्ट
+    विद्यार्थ्यांच्या प्रत्येक शाखेसाठी निवडलेले आहेत. खाली तुमची शाखा निवडा आणि
+    सुमारे २० मिनिटांचे ऑडिओ ऐका — कॉफी, जेवण किंवा वर्गाची वाट पाहताना.
+  </p>
+</section>
+
+<div class="stream-list" id="streamList">
+  <!-- stream rows injected by JS -->
+</div>
+
+<div class="scan-locations">
+  <span class="loc-pill" data-i18n="locCafe">☕ Cafés</span>
+  <span class="loc-pill" data-i18n="locCollege">🎓 Colleges</span>
+  <span class="loc-pill" data-i18n="locLibrary">📚 Libraries</span>
+  <span class="loc-pill" data-i18n="locWaiting">🚏 Waiting areas</span>
+</div>
+
+<div class="section" id="talksSection" style="display:none;">
+  <div class="section-head">
+    <div>
+      <div class="eyebrow" id="talksEyebrow">STREAM</div>
+      <h2 id="talksTitle">Talks</h2>
+    </div>
+    <button class="chip" id="backBtn" data-i18n="backBtn">← All streams</button>
+  </div>
+
+  <div class="grid" id="grid"></div>
+</div>
+
+<section class="how">
+  <div class="how-inner">
+    <h2 data-i18n="howTitle">How ShelfTalks works</h2>
+    <div class="steps">
+      <div class="step">
+        <span class="num">01</span>
+        <h3 data-i18n="step1h">Find a code</h3>
+        <p data-i18n="step1p">Stuck on a wall in your café, canteen, library or notice board — wherever there's a short wait.</p>
+      </div>
+      <div class="step">
+        <span class="num">02</span>
+        <h3 data-i18n="step2h">Scan with your camera</h3>
+        <p data-i18n="step2p">No app to install. Opens straight in your browser, ready to play.</p>
+      </div>
+      <div class="step">
+        <span class="num">03</span>
+        <h3 data-i18n="step3h">Pick your stream</h3>
+        <p data-i18n="step3p">Science, engineering, medicine, commerce, arts, management, law and more — talks chosen for what you study.</p>
+      </div>
+      <div class="step">
+        <span class="num">04</span>
+        <h3 data-i18n="step4h">Listen for ~20 minutes</h3>
+        <p data-i18n="step4p">One sharp idea, one real story, one thing you can use — in your language.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span data-i18n="footerBrand">ShelfTalks</span> — <span data-i18n="footerLine">made for the 20 minutes you didn't know you had</span>
+</footer>
+
+
+
+<script>
+/* ===================== DATA ===================== */
+const TALKS = [
+  // ===== MANAGEMENT / ENTREPRENEURSHIP =====
+  { stream:"management", speaker:"Simon Sinek", duration:18, title:{en:"How Great Leaders Inspire Action", hi:"महान नेता एक्शन के लिए कैसे प्रेरित करते हैं", mr:"उत्तम नेते कृतीसाठी कसे प्रेरित करतात"}, desc:{en:"The 'golden circle' idea behind why people follow some leaders and not others.", hi:"लोग कुछ नेताओं का अनुसरण क्यों करते हैं — 'गोल्डन सर्कल' विचार।", mr:"लोक काही नेत्यांचे अनुसरण का करतात — 'गोल्डन सर्कल' संकल्पना."}, url:"https://www.ted.com/talks/simon_sinek_how_great_leaders_inspire_action", yt:"qp0HIF3SfI4" },
+  { stream:"management", speaker:"Bill Gross", duration:7, title:{en:"The Single Biggest Reason Why Startups Succeed", hi:"स्टार्टअप्स की सफलता का सबसे बड़ा कारण", mr:"स्टार्टअप्स यशस्वी होण्याचे सर्वात मोठे कारण"}, desc:{en:"After studying hundreds of startups, one factor stood out above funding, team, or idea.", hi:"सैकड़ों स्टार्टअप्स के अध्ययन में फंडिंग, टीम या आइडिया से ऊपर एक कारक सामने आया।", mr:"शेकडो स्टार्टअप्सच्या अभ्यासात फंडिंग, टीम किंवा कल्पनेपेक्षा एक घटक वर ठरला."}, url:"https://www.ted.com/talks/bill_gross_the_single_biggest_reason_why_startups_succeed", yt:"bNpx7gpSqbY" },
+  { stream:"management", speaker:"Daniel Pink", duration:18, title:{en:"The Puzzle of Motivation", hi:"मोटिवेशन की पहेली", mr:"मोटिव्हेशनचे कोडे"}, desc:{en:"Why rewards and punishments often fail — and what actually drives high performance.", hi:"इनाम और सज़ा अक्सर क्यों फेल होते हैं — और असली परफॉर्मेंस किससे आती है।", mr:"बक्षीस आणि शिक्षा अनेकदा का अपयशी ठरतात — खरी कामगिरी कशामुळे येते."}, url:"https://www.ted.com/talks/dan_pink_the_puzzle_of_motivation" },
+  { stream:"management", speaker:"Amy Wilkinson", duration:11, title:{en:"Inside the Minds of 200 Entrepreneurs", hi:"200 उद्यमियों के दिमाग के भीतर", mr:"200 उद्योजकांच्या मनातील गोष्टी"}, desc:{en:"Habits and decision patterns shared by founders of PayPal, YouTube and more.", hi:"पेपाल, यूट्यूब जैसे फाउंडर्स की साझा आदतें और फैसले।", mr:"पेपाल, यूट्यूब सारख्या फाउंडर्सच्या सामायिक सवयी आणि निर्णय."}, url:"https://www.ted.com/talks/amy_wilkinson_how_to_spot_a_leader" },
+  { stream:"management", speaker:"Regina Hartley", duration:10, title:{en:"Why the Best Hire Might Not Have the Perfect Resume", hi:"सबसे बेहतरीन उम्मीदवार का रिज्यूमे परफेक्ट क्यों नहीं होता", mr:"सर्वोत्तम उमेदवाराचा रिज्युमे परफेक्ट का नसतो"}, desc:{en:"An HR executive explains why resilience often beats pedigree in hiring.", hi:"एक HR एग्जीक्यूटिव बताते हैं कि हायरिंग में पेडिग्री से ऊपर रेज़िलिएंस क्यों होती है।", mr:"नोकरीसाठी पेडिग्रीपेक्षा सहनशक्ती का महत्त्वाची ठरते, हे एक HR अधिकारी सांगतात."}, url:"https://www.ted.com/talks/regina_hartley_why_the_best_hire_might_not_have_the_perfect_resume" },
+
+  // ===== COMMERCE / ECONOMICS =====
+  { stream:"commerce", speaker:"Dan Ariely", duration:17, title:{en:"Are We in Control of Our Own Decisions?", hi:"क्या हम अपने फैसलों पर नियंत्रण रखते हैं?", mr:"आपण आपल्या निर्णयांवर नियंत्रण ठेवतो का?"}, desc:{en:"A behavioral economist on the hidden biases shaping every purchase and contract.", hi:"हर खरीद और कॉन्ट्रैक्ट को आकार देने वाले छिपे हुए बायस — एक बिहेवियरल इकोनॉमिस्ट की नज़र से।", mr:"प्रत्येक खरेदी आणि करारावर परिणाम करणाऱ्या छुप्या पूर्वग्रहांबद्दल एक वर्तन-अर्थशास्त्रज्ञ."}, url:"https://www.ted.com/talks/dan_ariely_are_we_in_control_of_our_own_decisions" },
+  { stream:"commerce", speaker:"Robert Reich", duration:15, title:{en:"How to Shrink Income Inequality", hi:"आय असमानता को कैसे घटाएं", mr:"उत्पन्न विषमता कशी कमी करावी"}, desc:{en:"An economist's framework for understanding wages, growth and fairness.", hi:"वेतन, विकास और निष्पक्षता को समझने का एक इकोनॉमिस्ट का फ्रेमवर्क।", mr:"वेतन, वाढ आणि निष्पक्षता समजून घेण्याचा एक अर्थशास्त्रज्ञाचा दृष्टिकोन."}, url:"https://www.ted.com/talks/robert_reich_how_to_shrink_income_inequality" },
+  { stream:"commerce", speaker:"Niall Ferguson", duration:19, title:{en:"The 6 Killer Apps of Prosperity", hi:"समृद्धि के 6 'किलर ऐप्स'", mr:"समृद्धीचे 6 'किलर अॅप्स'"}, desc:{en:"A historian's take on the institutions that separate rich economies from poor ones.", hi:"अमीर और गरीब अर्थव्यवस्थाओं में फर्क पैदा करने वाली संस्थाएं — एक इतिहासकार की नज़र से।", mr:"श्रीमंत आणि गरीब अर्थव्यवस्थांमध्ये फरक करणाऱ्या संस्था — एका इतिहासकाराचा दृष्टिकोन."}, url:"https://www.ted.com/talks/niall_ferguson_the_6_killer_apps_of_prosperity" },
+  { stream:"commerce", speaker:"Esther Duflo", duration:17, title:{en:"Social Experiments to Fight Poverty", hi:"गरीबी से लड़ने के लिए सामाजिक प्रयोग", mr:"गरिबीशी लढण्यासाठी सामाजिक प्रयोग"}, desc:{en:"How rigorous field experiments are reshaping development economics.", hi:"फील्ड एक्सपेरिमेंट्स डेवलपमेंट इकोनॉमिक्स को कैसे बदल रहे हैं।", mr:"क्षेत्रीय प्रयोग विकास अर्थशास्त्राला कसे आकार देत आहेत."}, url:"https://www.ted.com/talks/esther_duflo_social_experiments_to_fight_poverty" },
+  { stream:"commerce", speaker:"Kathryn Schulz", duration:17, title:{en:"Don't Regret Regret", hi:"पछतावे का पछतावा न करें", mr:"पश्चातापाचा पश्चाताप करू नका"}, desc:{en:"A useful lens for any commerce student making high-stakes financial decisions.", hi:"बड़े वित्तीय फैसले लेने वाले हर कॉमर्स छात्र के लिए एक उपयोगी नजरिया।", mr:"मोठे आर्थिक निर्णय घेणाऱ्या प्रत्येक वाणिज्य विद्यार्थ्यासाठी उपयुक्त दृष्टिकोन."}, url:"https://www.ted.com/talks/kathryn_schulz_don_t_regret_regret" },
+
+  // ===== ENGINEERING / TECHNOLOGY =====
+  { stream:"engineering", speaker:"Astro Teller", duration:13, title:{en:"The Unexpected Benefit of Celebrating Failure", hi:"असफलता का जश्न मनाने का अनोखा फायदा", mr:"अपयश साजरे करण्याचा अनपेक्षित फायदा"}, desc:{en:"How Google X's moonshot lab decides which engineering projects to kill — and why.", hi:"गूगल X की मूनशॉट लैब कैसे तय करती है कि कौन सा प्रोजेक्ट बंद करना है — और क्यों।", mr:"गूगल X ची मूनशॉट लॅब कोणता प्रोजेक्ट बंद करायचा हे कसे ठरवते — आणि का."}, url:"https://www.ted.com/talks/astro_teller_the_unexpected_benefit_of_celebrating_failure" },
+  { stream:"engineering", speaker:"Skylar Tibbits", duration:8, title:{en:"The Emergence of 4D Printing", hi:"4D प्रिंटिंग का उदय", mr:"4D प्रिंटिंगचा उदय"}, desc:{en:"Materials that can build and transform themselves — a glimpse of next-gen manufacturing.", hi:"खुद-ब-खुद बनने और बदलने वाली सामग्री — आगे की मैन्युफैक्चरिंग की झलक।", mr:"स्वतःच तयार होणारे आणि बदलणारे मटेरियल्स — पुढच्या पिढीच्या मॅन्युफॅक्चरिंगची झलक."}, url:"https://www.ted.com/talks/skylar_tibbits_the_emergence_of_4d_printing" },
+  { stream:"engineering", speaker:"Anil Ananthaswamy", duration:13, title:{en:"What It Takes to Do Extreme Astrophysics", hi:"एक्सट्रीम एस्ट्रोफिजिक्स के लिए क्या चाहिए", mr:"एक्स्ट्रीम अॅस्ट्रोफिजिक्ससाठी काय आवश्यक आहे"}, desc:{en:"The engineering behind the telescopes that imaged a black hole for the first time.", hi:"ब्लैक होल की पहली तस्वीर लेने वाली टेलीस्कोप्स के पीछे की इंजीनियरिंग।", mr:"पहिल्यांदा कृष्णविवराचा फोटो घेणाऱ्या टेलिस्कोप्समागील इंजिनिअरिंग."}, url:"https://www.ted.com/talks/anil_ananthaswamy_what_it_takes_to_do_extreme_astrophysics" },
+  { stream:"engineering", speaker:"Boyan Slat", duration:18, title:{en:"How I'm Working to Clean Up Plastic from the Ocean", hi:"मैं समुद्र से प्लास्टिक कैसे साफ कर रहा हूं", mr:"मी समुद्रातील प्लास्टिक कसा स्वच्छ करत आहे"}, desc:{en:"A young engineer's path from idea to a working ocean-cleanup system.", hi:"एक युवा इंजीनियर का आइडिया से वर्किंग ओशन-क्लीनअप सिस्टम तक का सफर।", mr:"एका तरुण इंजिनिअरचा कल्पनेपासून कार्यरत समुद्र-स्वच्छता प्रणालीपर्यंतचा प्रवास."}, url:"https://www.ted.com/talks/boyan_slat_how_i_m_working_to_clean_up_plastic_from_the_ocean" },
+  { stream:"engineering", speaker:"Markus Fischer", duration:16, title:{en:"A Robot That Flies Like a Bird", hi:"एक रोबोट जो पंछी जैसे उड़ता है", mr:"पक्ष्यासारखा उडणारा रोबोट"}, desc:{en:"Bio-inspired design: what engineers can learn from copying nature precisely.", hi:"बायो-इंस्पायर्ड डिज़ाइन: प्रकृति की सटीक नकल से इंजीनियर क्या सीख सकते हैं।", mr:"बायो-इन्स्पायर्ड डिझाइन: निसर्गाची अचूक नक्कल करून इंजिनिअर्स काय शिकू शकतात."}, url:"https://www.ted.com/talks/markus_fischer_a_robot_that_flies_like_a_bird" },
+
+  // ===== SCIENCE =====
+  { stream:"science", speaker:"Sarah Beery", duration:13, title:{en:"How AI Can Help Us Understand and Protect Wildlife", hi:"AI वाइल्डलाइफ को समझने और बचाने में कैसे मदद करता है", mr:"AI वन्यजीवांना समजून घेण्यास आणि वाचवण्यास कशी मदत करते"}, desc:{en:"How machine learning is opening new careers at the intersection of biology and computing.", hi:"मशीन लर्निंग बायोलॉजी और कंप्यूटिंग के बीच नए करियर कैसे खोल रही है।", mr:"मशीन लर्निंग जीवशास्त्र आणि संगणनशास्त्र यांच्या संगमावर नवीन करिअर्स कशी उघडत आहे."}, url:"https://www.ted.com/talks/sara_beery_how_ai_can_help_us_understand_and_protect_wildlife" },
+  { stream:"science", speaker:"Ray Kurzweil", duration:19, title:{en:"Could AI Extend Your Life Indefinitely?", hi:"क्या AI आपकी जिंदगी अनिश्चित काल तक बढ़ा सकता है?", mr:"AI तुमचे आयुष्य अनिश्चित काळासाठी वाढवू शकते का?"}, desc:{en:"A futurist's case for where AI and biology converge in the next decade.", hi:"AI और बायोलॉजी अगले दशक में कहां मिलेंगे — एक फ्यूचरिस्ट की राय।", mr:"पुढील दशकात AI आणि जीवशास्त्र कुठे एकत्र येतील — एका भविष्यवेत्त्याचे मत."}, url:"https://www.ted.com/talks/ray_kurzweil_could_ai_extend_your_life_indefinitely" },
+  { stream:"science", speaker:"Hannah Ritchie", duration:14, title:{en:"Are We Filling the World with Trash?", hi:"क्या हम दुनिया को कचरे से भर रहे हैं?", mr:"आपण जगाला कचऱ्याने भरत आहोत का?"}, desc:{en:"A data scientist separates myth from fact on waste, recycling and climate.", hi:"कचरा, रीसाइक्लिंग और क्लाइमेट को लेकर मिथक और फैक्ट्स में फर्क — एक डेटा साइंटिस्ट की नजर से।", mr:"कचरा, पुनर्वापर आणि हवामान याबाबत मिथक आणि सत्य — एका डेटा सायंटिस्टचा दृष्टिकोन."}, url:"https://www.ted.com/talks/hannah_ritchie_are_we_the_last_generation_or_the_first_sustainable_one", yt:"Kl3VVrggKz4" },
+  { stream:"science", speaker:"David Sinclair", duration:17, title:{en:"A Cure for Aging? It's Closer Than It Seems", hi:"बुढ़ापे का इलाज? यह जितना लगता है उससे करीब है", mr:"वार्धक्याचा उपाय? वाटतो त्यापेक्षा जवळ आहे"}, desc:{en:"A biology researcher explains the science of why and how we age.", hi:"हम क्यों और कैसे बूढ़े होते हैं — एक बायोलॉजी रिसर्चर की साइंस।", mr:"आपण का आणि कसे वृद्ध होतो — एका जीवशास्त्र संशोधकाचे विज्ञान."}, url:"https://www.ted.com/talks/david_sinclair_a_cure_for_aging_it_s_closer_than_it_seems" },
+  { stream:"science", speaker:"Tim Berners-Lee", duration:16, title:{en:"The Next Web of Open, Linked Data", hi:"खुले, लिंक्ड डेटा का अगला वेब", mr:"ओपन, लिंक्ड डेटाचे पुढचे वेब"}, desc:{en:"The inventor of the web on the science of how information connects and scales.", hi:"वेब के निर्माता — जानकारी कैसे जुड़ती और बढ़ती है, इसकी साइंस।", mr:"वेबच्या निर्मात्याकडून — माहिती कशी जोडली जाते आणि वाढते, याचे विज्ञान."}, url:"https://www.ted.com/talks/tim_berners_lee_the_next_web_of_open_linked_data" },
+
+  // ===== MEDICAL =====
+  { stream:"medical", speaker:"Atul Gawande", duration:18, title:{en:"How Do We Heal Medicine?", hi:"हम मेडिसिन को कैसे ठीक करें?", mr:"आपण वैद्यकशास्त्राला कसे बरे करू?"}, desc:{en:"A surgeon on systems thinking, checklists, and what's broken in modern healthcare.", hi:"एक सर्जन की नजर से हेल्थकेयर सिस्टम में क्या टूटा है और चेकलिस्ट कैसे मदद करती है।", mr:"आरोग्यसेवा प्रणालीत काय बिघडले आहे — एका सर्जनचा दृष्टिकोन आणि चेकलिस्टची भूमिका."}, url:"https://www.ted.com/talks/atul_gawande_how_do_we_heal_medicine" },
+  { stream:"medical", speaker:"Shoshana Ungerleider (TED Health)", duration:20, title:{en:"What Exercise Does to Your Brain", hi:"एक्सरसाइज आपके दिमाग के साथ क्या करती है", mr:"व्यायाम तुमच्या मेंदूवर काय परिणाम करतो"}, desc:{en:"A medical podcast episode on the neuroscience of movement and mental health.", hi:"मूवमेंट और मेंटल हेल्थ की न्यूरोसाइंस पर एक मेडिकल पॉडकास्ट एपिसोड।", mr:"हालचाल आणि मानसिक आरोग्याच्या न्यूरोसायन्सवरील एक मेडिकल पॉडकास्ट भाग."}, url:"https://www.ted.com/podcasts/ted-health" },
+  { stream:"medical", speaker:"Thomas Insel", duration:13, title:{en:"Toward a New Understanding of Mental Illness", hi:"मानसिक बीमारी को समझने का नया तरीका", mr:"मानसिक आजाराकडे पाहण्याचा नवा दृष्टिकोन"}, desc:{en:"A psychiatrist reframes mental illness as a brain-circuit disorder, not a character flaw.", hi:"एक मनोचिकित्सक मानसिक बीमारी को चरित्र की कमी नहीं, बल्कि ब्रेन-सर्किट डिसऑर्डर बताते हैं।", mr:"मानसिक आजार हा चारित्र्याचा दोष नसून मेंदू-सर्किटचा विकार आहे, हे एक मनोचिकित्सक सांगतात."}, url:"https://www.ted.com/talks/thomas_insel_toward_a_new_understanding_of_mental_illness" },
+  { stream:"medical", speaker:"Alice Roberts", duration:15, title:{en:"What Made the Human Brain Special?", hi:"मानव मस्तिष्क को खास किस चीज़ ने बनाया?", mr:"मानवी मेंदू विशेष कशामुळे बनला?"}, desc:{en:"An anatomist walks through the evolutionary biology behind human cognition.", hi:"मानव कॉग्निशन के पीछे की एवोल्यूशनरी बायोलॉजी — एक एनाटॉमिस्ट की नजर से।", mr:"मानवी आकलनशक्तीमागील उत्क्रांतीशास्त्र — एका शरीररचनाशास्त्रज्ञाचा दृष्टिकोन."}, url:"https://www.ted.com/talks/alice_roberts_what_makes_the_human_brain_special" },
+  { stream:"medical", speaker:"Jane McGonigal", duration:20, title:{en:"The Game That Can Give You 10 Extra Years of Life", hi:"वह गेम जो आपको 10 साल अतिरिक्त जीवन दे सकता है", mr:"तुम्हाला 10 अधिक वर्षांचे आयुष्य देणारा खेळ"}, desc:{en:"A researcher on the science linking resilience, mindset and physical health outcomes.", hi:"रेज़िलिएंस, माइंडसेट और फिजिकल हेल्थ को जोड़ने वाली साइंस — एक रिसर्चर की नजर से।", mr:"सहनशक्ती, मानसिकता आणि शारीरिक आरोग्य यांना जोडणारे विज्ञान — एका संशोधकाचा दृष्टिकोन."}, url:"https://www.ted.com/talks/jane_mcgonigal_the_game_that_can_give_you_10_extra_years_of_life" },
+
+  // ===== ARTS & HUMANITIES =====
+  { stream:"arts", speaker:"Elizabeth Gilbert", duration:19, title:{en:"Your Elusive Creative Genius", hi:"आपकी रहस्यमयी रचनात्मक प्रतिभा", mr:"तुमची गूढ सर्जनशील प्रतिभा"}, desc:{en:"The author of Eat, Pray, Love on sustaining creative work without burning out.", hi:"'ईट, प्रे, लव' की लेखिका — बिना थके रचनात्मक काम कैसे जारी रखें।", mr:"'ईट, प्रे, लव्ह'च्या लेखिका — न थकता सर्जनशील काम कसे सुरू ठेवावे."}, url:"https://www.ted.com/talks/elizabeth_gilbert_your_elusive_creative_genius" },
+  { stream:"arts", speaker:"Adam Aleksic", duration:15, title:{en:"How Internet Slang Is Reshaping Language", hi:"इंटरनेट स्लैंग भाषा को कैसे बदल रहा है", mr:"इंटरनेट स्लँग भाषेला कसे बदलत आहे"}, desc:{en:"A linguist on how social media is changing vocabulary and identity in real time.", hi:"सोशल मीडिया वोकैबुलरी और पहचान को रियल टाइम में कैसे बदल रहा है — एक भाषाविद् की नजर से।", mr:"सोशल मीडिया शब्दसंग्रह आणि ओळख रिअल टाइममध्ये कशी बदलत आहे — एका भाषातज्ज्ञाचा दृष्टिकोन."}, url:"https://www.ted.com/talks/adam_aleksic_how_internet_slang_is_reshaping_language" },
+  { stream:"arts", speaker:"Luvvie Ajayi Jones", duration:11, title:{en:"Get Comfortable with Being Uncomfortable", hi:"असहज होने में सहज बनें", mr:"अस्वस्थतेची सवय करा"}, desc:{en:"A writer and speaker on creative courage, and saying what others won't.", hi:"क्रिएटिव साहस पर एक लेखक की बात — जो बात कोई नहीं कहता, वह कैसे कहें।", mr:"सर्जनशील धैर्याबद्दल एका लेखकाचे विचार — जे कोणी सांगत नाही ते कसे सांगावे."}, url:"https://www.ted.com/talks/luvvie_ajayi_jones_get_comfortable_with_being_uncomfortable" },
+  { stream:"arts", speaker:"John Green", duration:9, title:{en:"The Nerd's Guide to Learning Everything Online", hi:"ऑनलाइन सब कुछ सीखने की नर्ड गाइड", mr:"ऑनलाइन सर्व काही शिकण्यासाठी नर्डची गाइड"}, desc:{en:"The author and YouTuber on curiosity-driven learning across any subject.", hi:"लेखक और यूट्यूबर — किसी भी विषय में जिज्ञासा-आधारित सीखने पर।", mr:"लेखक आणि यूट्यूबर — कोणत्याही विषयात कुतूहलावर आधारित शिक्षणाबद्दल."}, url:"https://www.ted.com/talks/john_green_the_nerd_s_guide_to_learning_everything_online" },
+  { stream:"arts", speaker:"Shashi Tharoor", duration:17, title:{en:"Why Nations Should Pursue 'Soft' Power", hi:"देशों को 'सॉफ्ट' पावर क्यों अपनानी चाहिए", mr:"देशांनी 'सॉफ्ट' पॉवरचा अवलंब का करावा"}, desc:{en:"A diplomat and author on culture, storytelling, and influence on the world stage.", hi:"संस्कृति, कहानी और वैश्विक मंच पर प्रभाव — एक डिप्लोमैट और लेखक की नजर से।", mr:"संस्कृती, कथाकथन आणि जागतिक स्तरावरील प्रभाव — एका मुत्सद्दी आणि लेखकाचा दृष्टिकोन."}, url:"https://www.ted.com/talks/shashi_tharoor_why_nations_should_pursue_soft_power" },
+
+  // ===== SOCIAL SCIENCE =====
+  { stream:"social", speaker:"Brené Brown", duration:20, title:{en:"The Power of Vulnerability", hi:"वल्नरेबिलिटी की ताकत", mr:"असुरक्षिततेची शक्ती"}, desc:{en:"A researcher's landmark talk on shame, connection and human behavior.", hi:"शर्म, जुड़ाव और मानव व्यवहार पर एक रिसर्चर की मशहूर बात।", mr:"लाज, संबंध आणि मानवी वर्तन यावरील एका संशोधकाचे प्रसिद्ध भाषण."}, url:"https://www.ted.com/talks/brene_brown_the_power_of_vulnerability" },
+  { stream:"social", speaker:"Philip Zimbardo", duration:23, title:{en:"The Psychology of Evil", hi:"बुराई का मनोविज्ञान", mr:"वाईटाचे मानसशास्त्र"}, desc:{en:"The psychologist behind the Stanford Prison Experiment on how situations shape behavior.", hi:"स्टैनफोर्ड प्रिज़न एक्सपेरिमेंट के मनोवैज्ञानिक — परिस्थितियां व्यवहार को कैसे आकार देती हैं।", mr:"स्टॅनफोर्ड प्रिझन प्रयोगामागील मानसशास्त्रज्ञ — परिस्थिती वर्तनाला कशी आकार देते."}, url:"https://www.ted.com/talks/philip_zimbardo_the_psychology_of_evil" },
+  { stream:"social", speaker:"Sheena Iyengar", duration:18, title:{en:"How to Make Choosing Easier", hi:"चुनना आसान कैसे बनाएं", mr:"निवड करणे सोपे कसे करावे"}, desc:{en:"A social scientist on why too many options can paralyze decision-making.", hi:"बहुत ज़्यादा विकल्प फैसले को कैसे मुश्किल बना देते हैं — एक सोशल साइंटिस्ट की नजर से।", mr:"खूप जास्त पर्याय निर्णय घेणे कसे अवघड करतात — एका समाजशास्त्रज्ञाचा दृष्टिकोन."}, url:"https://www.ted.com/talks/sheena_iyengar_how_to_make_choosing_easier" },
+  { stream:"social", speaker:"Hiba Qasas", duration:14, title:{en:"What Peacebuilders Get Wrong — and How to Fix It", hi:"शांति-निर्माता क्या गलत करते हैं — और इसे कैसे ठीक करें", mr:"शांतीनिर्माते कुठे चुकतात — आणि ते कसे सुधारावे"}, desc:{en:"Four decades of conflict-zone mediation distilled into practical lessons.", hi:"चार दशकों के संघर्ष-क्षेत्र मीडिएशन से निकले व्यावहारिक सबक।", mr:"चार दशकांच्या संघर्ष-क्षेत्र मध्यस्थीतून मिळालेले व्यावहारिक धडे."}, url:"https://www.ted.com/talks/hiba_qasas_what_peacebuilders_get_wrong_and_how_to_fix_it" },
+  { stream:"social", speaker:"Wendy De La Rosa", duration:11, title:{en:"3 Psychological Tricks to Help You Save Money", hi:"पैसे बचाने के लिए 3 मनोवैज्ञानिक ट्रिक्स", mr:"पैसे वाचवण्यासाठी 3 मानसशास्त्रीय ट्रिक्स"}, desc:{en:"Behavioral science applied to everyday financial habits of young adults.", hi:"युवाओं की रोज़मर्रा की वित्तीय आदतों पर बिहेवियरल साइंस का उपयोग।", mr:"तरुणांच्या दैनंदिन आर्थिक सवयींवर वर्तन-विज्ञानाचा वापर."}, url:"https://www.ted.com/talks/wendy_de_la_rosa_3_psychological_tricks_to_help_you_save_money" },
+
+  // ===== LAW =====
+  { stream:"law", speaker:"Philip K. Howard", duration:16, title:{en:"4 Ways to Fix a Broken Legal System", hi:"टूटे हुए कानूनी सिस्टम को ठीक करने के 4 तरीके", mr:"बिघडलेल्या कायदा प्रणालीसाठी 4 उपाय"}, desc:{en:"A lawyer's case for simplifying law so people can use judgment again.", hi:"कानून को सरल बनाने का तर्क ताकि लोग फिर से अपनी समझ का उपयोग कर सकें — एक वकील की राय।", mr:"लोकांना पुन्हा स्वतःचा विवेक वापरता यावा यासाठी कायदा सोपा करण्याचा एका वकिलाचा मुद्दा."}, url:"https://www.ted.com/talks/philip_k_howard_4_ways_to_fix_a_broken_legal_system" },
+  { stream:"law", speaker:"Bryan Stevenson", duration:23, title:{en:"We Need to Talk About an Injustice", hi:"हमें अन्याय के बारे में बात करनी चाहिए", mr:"आपण अन्यायाबद्दल बोलायला हवे"}, desc:{en:"A public-interest lawyer on identity, justice and reforming the legal system.", hi:"पहचान, न्याय और कानूनी सुधार पर एक पब्लिक-इंटरेस्ट वकील की बात।", mr:"ओळख, न्याय आणि कायदा सुधारणा यावर एका सार्वजनिक हित वकिलाचे विचार."}, url:"https://www.ted.com/talks/bryan_stevenson_we_need_to_talk_about_an_injustice" },
+  { stream:"law", speaker:"Larry Lessig", duration:18, title:{en:"We the People, and the Republic We Must Reclaim", hi:"हम लोग, और वह गणराज्य जिसे हमें फिर से पाना है", mr:"आम्ही लोक, आणि पुन्हा मिळवायचे प्रजासत्ताक"}, desc:{en:"A law professor on money, influence, and reforming political systems.", hi:"पैसा, प्रभाव और राजनीतिक सिस्टम सुधार पर एक लॉ प्रोफेसर की बात।", mr:"पैसा, प्रभाव आणि राजकीय व्यवस्था सुधारणा यावर एका कायदा प्राध्यापकाचे विचार."}, url:"https://www.ted.com/talks/larry_lessig_we_the_people_and_the_republic_we_must_reclaim" },
+  { stream:"law", speaker:"Anne Milgram", duration:13, title:{en:"Why Smart Statistics Are the Key to Fighting Crime", hi:"अपराध से लड़ने की कुंजी है स्मार्ट स्टैटिस्टिक्स", mr:"गुन्ह्यांशी लढण्याची किल्ली: स्मार्ट आकडेवारी"}, desc:{en:"A former attorney general on bringing data and moneyball thinking to justice systems.", hi:"न्याय व्यवस्था में डेटा और 'मनीबॉल' सोच लाने पर एक पूर्व अटॉर्नी जनरल की बात।", mr:"न्यायव्यवस्थेत डेटा आणि 'मनीबॉल' विचारसरणी आणण्यावर एका माजी अॅटर्नी जनरलचे विचार."}, url:"https://www.ted.com/talks/anne_milgram_why_smart_statistics_are_the_key_to_fighting_crime" },
+  { stream:"law", speaker:"Eli Pariser", duration:9, title:{en:"Beware Online 'Filter Bubbles'", hi:"ऑनलाइन 'फिल्टर बबल' से सावधान रहें", mr:"ऑनलाइन 'फिल्टर बबल'पासून सावध राहा"}, desc:{en:"How algorithms quietly shape what information — and what rights — people see.", hi:"एल्गोरिदम चुपचाप यह तय करते हैं कि लोग कौन सी जानकारी और अधिकार देखते हैं।", mr:"अल्गोरिदम लोकांना कोणती माहिती आणि अधिकार दिसतात हे कसे ठरवतात."}, url:"https://www.ted.com/talks/eli_pariser_beware_online_filter_bubbles" }
+];
+
+/* ===================== TRANSLATIONS (UI strings) ===================== */
+const I18N = {
+  en:{
+    badge:"A New Initiative",
+    heroTitle:"The Knowledge Box",
+    heroSub:"All the talks and podcasts available through this QR code are picked for every stream of study. Choose your stream below and listen to about 20 minutes of audio — while you wait for coffee, your meal, or your class.",
+    locCafe:"☕ Cafés", locCollege:"🎓 Colleges", locLibrary:"📚 Libraries", locWaiting:"🚏 Waiting areas",
+    streamScience:"Science",
+    streamEngineering:"Engineering",
+    streamMedical:"Medical",
+    streamCommerce:"Commerce & Economics",
+    streamManagement:"Management & Entrepreneurship",
+    streamArts:"Arts & Humanities",
+    streamSocial:"Social Science",
+    streamLaw:"Law",
+    backBtn:"← All streams",
+    howTitle:"How it works",
+    step1h:"Find a code", step1p:"Stuck on a wall in your café, canteen, library or notice board — wherever there's a short wait.",
+    step2h:"Scan with your camera", step2p:"No app to install. Opens straight in your browser, ready to play.",
+    step3h:"Pick your stream", step3p:"Science, engineering, medicine, commerce, arts, management, law and more — talks chosen for what you study.",
+    step4h:"Listen for ~20 minutes", step4p:"One sharp idea, one real story, one thing you can use — in your language.",
+    footerBrand:"The Knowledge Box", footerLine:"made for the 20 minutes you didn't know you had",
+    playBtn:"Listen", min:"min", openBtn:"Open talk", playerNote:"This opens the official TED page where the talk can be streamed or downloaded free, with audio in multiple languages."
+  },
+  hi:{
+    badge:"अभिनव उपक्रम",
+    heroTitle:"ज्ञान-पेटी",
+    heroSub:"इस क्यूआर कोड के माध्यम से उपलब्ध सभी टॉक्स और पॉडकास्ट हर पढ़ाई की स्ट्रीम के लिए चुने गए हैं। नीचे अपनी स्ट्रीम चुनें और लगभग 20 मिनट का ऑडियो सुनें — कॉफी, खाने या क्लास का इंतज़ार करते हुए।",
+    locCafe:"☕ कैफ़े", locCollege:"🎓 कॉलेज", locLibrary:"📚 लाइब्रेरी", locWaiting:"🚏 वेटिंग एरिया",
+    streamScience:"विज्ञान",
+    streamEngineering:"इंजीनियरिंग",
+    streamMedical:"मेडिकल",
+    streamCommerce:"कॉमर्स एवं अर्थशास्त्र",
+    streamManagement:"मैनेजमेंट एवं उद्यमिता",
+    streamArts:"कला एवं मानविकी",
+    streamSocial:"समाजशास्त्र",
+    streamLaw:"कानून",
+    backBtn:"← सभी स्ट्रीम्स",
+    howTitle:"यह कैसे काम करता है",
+    step1h:"कोड ढूंढें", step1p:"आपके कैफ़े, कैंटीन, लाइब्रेरी या नोटिस बोर्ड की दीवार पर — जहाँ भी थोड़ा इंतज़ार हो।",
+    step2h:"कैमरे से स्कैन करें", step2p:"कोई ऐप इंस्टॉल नहीं करना। सीधे ब्राउज़र में खुलेगा, सुनने के लिए तैयार।",
+    step3h:"अपनी स्ट्रीम चुनें", step3p:"विज्ञान, इंजीनियरिंग, मेडिकल, कॉमर्स, आर्ट्स, मैनेजमेंट, लॉ और भी — आपकी पढ़ाई के अनुसार चुनी गई टॉक्स।",
+    step4h:"लगभग 20 मिनट सुनें", step4p:"एक सटीक आइडिया, एक सच्ची कहानी, एक काम की बात — आपकी भाषा में।",
+    footerBrand:"ज्ञान-पेटी", footerLine:"उन 20 मिनटों के लिए बनाया गया जो आपको पता ही नहीं था कि आपके पास हैं",
+    playBtn:"सुनें", min:"मिनट", openBtn:"टॉक खोलें", playerNote:"यह TED के आधिकारिक पेज पर खुलेगा जहाँ टॉक मुफ्त में सुनी या डाउनलोड की जा सकती है, कई भाषाओं के ऑडियो के साथ।"
+  },
+  mr:{
+    badge:"अभिनव उपक्रम",
+    heroTitle:"ज्ञान-पेटी",
+    heroSub:"या क्यूआर कोडद्वारे उपलब्ध करून दिलेले सर्व व्याख्याने (Talks) आणि पॉडकास्ट विद्यार्थ्यांच्या प्रत्येक शाखेसाठी निवडलेले आहेत. खाली तुमची शाखा निवडा आणि सुमारे २० मिनिटांचे ऑडिओ ऐका — कॉफी, जेवण किंवा वर्गाची वाट पाहताना.",
+    locCafe:"☕ कॅफे", locCollege:"🎓 कॉलेज", locLibrary:"📚 ग्रंथालय", locWaiting:"🚏 प्रतीक्षा कक्ष",
+    streamScience:"विज्ञान",
+    streamEngineering:"अभियांत्रिकी",
+    streamMedical:"वैद्यकीय",
+    streamCommerce:"वाणिज्य आणि अर्थशास्त्र",
+    streamManagement:"व्यवस्थापन आणि उद्योजकता",
+    streamArts:"कला आणि मानव्यविद्या",
+    streamSocial:"समाजशास्त्र",
+    streamLaw:"कायदा",
+    backBtn:"← सर्व शाखा",
+    howTitle:"हे कसे काम करते",
+    step1h:"कोड शोधा", step1p:"तुमच्या कॅफे, कॅन्टीन, ग्रंथालय किंवा नोटीस बोर्डाच्या भिंतीवर — जिथे थोडी प्रतीक्षा असते.",
+    step2h:"कॅमेऱ्याने स्कॅन करा", step2p:"कोणतेही अॅप इन्स्टॉल करण्याची गरज नाही. थेट ब्राउझरमध्ये उघडेल, ऐकण्यासाठी तयार.",
+    step3h:"तुमची शाखा निवडा", step3p:"विज्ञान, अभियांत्रिकी, वैद्यकीय, वाणिज्य, कला, व्यवस्थापन, कायदा आणि बरेच काही — तुमच्या अभ्यासानुसार निवडलेल्या टॉक्स.",
+    step4h:"सुमारे 20 मिनिटे ऐका", step4p:"एक नेमकी कल्पना, एक खरी गोष्ट, एक उपयोगी मुद्दा — तुमच्या भाषेत.",
+    footerBrand:"ज्ञान-पेटी", footerLine:"तुमच्याकडे आहेत हे माहीत नसलेल्या त्या 20 मिनिटांसाठी बनवलेले",
+    playBtn:"ऐका", min:"मिनिटे", openBtn:"टॉक उघडा", playerNote:"हे TED च्या अधिकृत पानावर उघडेल जिथे टॉक मोफत ऐकता किंवा डाउनलोड करता येते, अनेक भाषांमधील ऑडिओसह."
+  },
+  es:{
+    badge:"Una Nueva Iniciativa",
+    heroTitle:"La Caja del Conocimiento",
+    heroSub:"Todas las charlas y podcasts disponibles mediante este código QR están elegidos para cada área de estudio. Elige tu área abajo y escucha unos 20 minutos de audio — mientras esperas tu café, tu comida o tu clase.",
+    locCafe:"☕ Cafeterías", locCollege:"🎓 Universidades", locLibrary:"📚 Bibliotecas", locWaiting:"🚏 Salas de espera",
+    streamScience:"Ciencia", streamEngineering:"Ingeniería", streamMedical:"Medicina",
+    streamCommerce:"Comercio y Economía", streamManagement:"Gestión y Emprendimiento",
+    streamArts:"Artes y Humanidades", streamSocial:"Ciencias Sociales", streamLaw:"Derecho",
+    backBtn:"← Todas las áreas",
+    howTitle:"Cómo funciona",
+    step1h:"Encuentra un código", step1p:"En la pared de tu cafetería, cantina, biblioteca o tablón — donde haya una pequeña espera.",
+    step2h:"Escanea con tu cámara", step2p:"Sin instalar nada. Se abre directo en tu navegador, listo para reproducir.",
+    step3h:"Elige tu área", step3p:"Ciencia, ingeniería, medicina, comercio, artes, gestión, derecho y más — charlas elegidas según lo que estudias.",
+    step4h:"Escucha unos 20 minutos", step4p:"Una idea concreta, una historia real, algo que puedas usar — en tu idioma.",
+    footerBrand:"La Caja del Conocimiento", footerLine:"hecho para esos 20 minutos que no sabías que tenías",
+    playBtn:"Escuchar", min:"min", openBtn:"Abrir charla", playerNote:"Esto abre la página oficial de TED donde la charla se puede escuchar o descargar gratis, con audio en varios idiomas."
+  },
+  fr:{
+    badge:"Une Nouvelle Initiative",
+    heroTitle:"La Boîte à Savoir",
+    heroSub:"Toutes les conférences et podcasts disponibles via ce code QR sont choisis pour chaque filière d'études. Choisissez votre filière ci-dessous et écoutez environ 20 minutes d'audio — en attendant votre café, votre repas ou votre cours.",
+    locCafe:"☕ Cafés", locCollege:"🎓 Universités", locLibrary:"📚 Bibliothèques", locWaiting:"🚏 Salles d'attente",
+    streamScience:"Sciences", streamEngineering:"Ingénierie", streamMedical:"Médecine",
+    streamCommerce:"Commerce et Économie", streamManagement:"Management et Entrepreneuriat",
+    streamArts:"Arts et Lettres", streamSocial:"Sciences Sociales", streamLaw:"Droit",
+    backBtn:"← Toutes les filières",
+    howTitle:"Comment ça marche",
+    step1h:"Trouvez un code", step1p:"Sur un mur de votre café, cantine, bibliothèque ou panneau d'affichage — partout où il y a une petite attente.",
+    step2h:"Scannez avec votre caméra", step2p:"Aucune application à installer. S'ouvre directement dans votre navigateur, prêt à lire.",
+    step3h:"Choisissez votre filière", step3p:"Sciences, ingénierie, médecine, commerce, arts, management, droit et plus — des conférences choisies selon vos études.",
+    step4h:"Écoutez environ 20 minutes", step4p:"Une idée précise, une histoire vraie, une chose utile — dans votre langue.",
+    footerBrand:"La Boîte à Savoir", footerLine:"conçu pour ces 20 minutes que vous ne saviez pas avoir",
+    playBtn:"Écouter", min:"min", openBtn:"Ouvrir la conférence", playerNote:"Ceci ouvre la page officielle TED où la conférence peut être écoutée ou téléchargée gratuitement, avec audio en plusieurs langues."
+  }
+};
+
+const STREAM_ICONS = {
+  science:"🔬", engineering:"⚙️", medical:"🩺", commerce:"💹",
+  management:"📈", arts:"🎭", social:"🌍", law:"⚖️"
+};
+const STREAM_KEYS = ["science","engineering","medical","commerce","management","arts","social","law"];
+
+let currentLang = "en";
+let currentStream = null; // null = home list view
+
+/* ===================== RENDER ===================== */
+function applyI18n(){
+  const t = I18N[currentLang];
+  document.querySelectorAll("[data-i18n]").forEach(el=>{
+    const key = el.getAttribute("data-i18n");
+    if(t[key]) el.textContent = t[key];
+  });
+  renderStreamList();
+  if(currentStream) renderGrid();
+}
+
+function renderStreamList(){
+  const t = I18N[currentLang];
+  const list = document.getElementById("streamList");
+  list.innerHTML = "";
+  const keyMap = {
+    science:"streamScience", engineering:"streamEngineering", medical:"streamMedical",
+    commerce:"streamCommerce", management:"streamManagement", arts:"streamArts",
+    social:"streamSocial", law:"streamLaw"
+  };
+  STREAM_KEYS.forEach(stream=>{
+    const row = document.createElement("div");
+    row.className = "stream-row" + (currentStream === stream ? " active" : "");
+    row.innerHTML = `
+      <span class="label"><span class="icon">${STREAM_ICONS[stream]}</span> ${t[keyMap[stream]]}</span>
+      <span class="arrow">→</span>
+    `;
+    row.addEventListener("click", ()=>{
+      currentStream = stream;
+      renderStreamList();
+      renderGrid();
+      document.getElementById("talksSection").style.display = "block";
+      document.getElementById("talksSection").scrollIntoView({behavior:"smooth", block:"start"});
+    });
+    list.appendChild(row);
+  });
+}
+
+function renderGrid(){
+  const grid = document.getElementById("grid");
+  grid.innerHTML = "";
+  const t = I18N[currentLang];
+
+  const keyMap = {
+    science:"streamScience", engineering:"streamEngineering", medical:"streamMedical",
+    commerce:"streamCommerce", management:"streamManagement", arts:"streamArts",
+    social:"streamSocial", law:"streamLaw"
+  };
+  const streamName = t[keyMap[currentStream]];
+  document.getElementById("talksEyebrow").textContent = STREAM_ICONS[currentStream] + " " + streamName;
+  document.getElementById("talksTitle").textContent = streamName;
+
+  const filtered = TALKS.filter(talk => talk.stream === currentStream);
+
+  filtered.forEach(talk=>{
+    const lang3 = ["en","hi","mr"].includes(currentLang) ? currentLang : "en";
+    const title = talk.title[lang3] || talk.title.en;
+    const desc = talk.desc[lang3] || talk.desc.en;
+
+    const card = document.createElement("article");
+    card.className = "ticket";
+    const ytQuery = encodeURIComponent(`${talk.speaker} ${talk.title.en} TED`);
+    const embedSrc = talk.yt
+      ? `https://www.youtube.com/embed/${talk.yt}?autoplay=1`
+      : `https://www.youtube.com/embed?listType=search&list=${ytQuery}&autoplay=1`;
+
+    card.innerHTML = `
+      <div class="stub">
+        <span class="mins">${talk.duration}</span>
+        <span class="minslabel">${t.min}</span>
+        <span class="stamp">TED</span>
+      </div>
+      <div class="body">
+        <div class="stream-tag">${talk.speaker}</div>
+        <h3>${title}</h3>
+        <p class="desc">${desc}</p>
+        <div class="meta">
+          <span class="meta-tag">EN</span>
+          <span class="meta-tag">HI</span>
+          <span class="meta-tag">MR</span>
+        </div>
+        <button class="play-btn" type="button">
+          <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+          ${t.playBtn}
+        </button>
+        <div class="inline-player">
+          <iframe loading="lazy" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        </div>
+        <div class="player-note" style="display:none;">
+          ${t.playerNote} <a href="${talk.url}" target="_blank" rel="noopener">TED.com →</a>
+        </div>
+      </div>
+    `;
+
+    const btn = card.querySelector(".play-btn");
+    const playerWrap = card.querySelector(".inline-player");
+    const iframe = card.querySelector("iframe");
+    const note = card.querySelector(".player-note");
+
+    btn.addEventListener("click", ()=>{
+      if(!playerWrap.classList.contains("open")){
+        iframe.src = embedSrc;
+        playerWrap.classList.add("open");
+        note.style.display = "block";
+        btn.querySelector("svg").outerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12"><rect x="5" y="3" width="4" height="18"/><rect x="15" y="3" width="4" height="18"/></svg>';
+      } else {
+        playerWrap.classList.remove("open");
+        iframe.src = "";
+        note.style.display = "none";
+        btn.querySelector("svg").outerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12"><polygon points="5,3 19,12 5,21"/></svg>';
+      }
+    });
+
+    grid.appendChild(card);
+  });
+}
+
+/* ===================== INTERACTIONS ===================== */
+document.getElementById("langSelect").addEventListener("change", e=>{
+  currentLang = e.target.value;
+  applyI18n();
+});
+
+document.getElementById("backBtn").addEventListener("click", ()=>{
+  currentStream = null;
+  document.getElementById("talksSection").style.display = "none";
+  renderStreamList();
+  document.getElementById("streamList").scrollIntoView({behavior:"smooth", block:"start"});
+});
+
+/* init */
+applyI18n();
+</script>
+
+</body>
+</html>
