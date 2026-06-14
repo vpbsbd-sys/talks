@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Knowledge Box — Scan, Pick a Stream, Listen</title>
+<title>प्रज्ञावाणी (Pragyavani) — Learn • Listen • Grow</title>
 <style>
   :root{
     --ink:#1B2A4A;
@@ -29,95 +29,75 @@
     letter-spacing:-0.01em;
   }
 
-  /* ====== TOP BAR ====== */
-  header{
-    position:sticky; top:0; z-index:50;
-    background:var(--ink); color:var(--paper);
-    padding:14px 18px;
-    display:flex; align-items:center; justify-content:space-between;
-    border-bottom:3px solid var(--coral);
-  }
-  .brand{ display:flex; align-items:center; gap:10px; }
-  .brand .mark{
-    width:34px; height:34px; border-radius:6px;
-    background:var(--coral);
-    display:flex; align-items:center; justify-content:center;
-    font-family:Georgia,serif; font-weight:bold; font-size:18px; color:var(--ink);
-    transform:rotate(-4deg);
-  }
-  .brand .name{ font-family:Georgia,serif; font-size:1.25rem; font-weight:700; }
-  .brand .tag{ font-size:0.65rem; opacity:0.7; letter-spacing:0.08em; text-transform:uppercase; }
-
-  .lang-select{
-    background:transparent; color:var(--paper); border:1px solid rgba(247,243,233,0.35);
-    border-radius:20px; padding:6px 12px; font-size:0.8rem; font-weight:600;
-    cursor:pointer;
-  }
-  .lang-select:focus{ outline:2px solid var(--coral); }
-  .lang-select option{ color:var(--charcoal); }
-
-  /* ====== HERO (e-Granthalay style banner) ====== */
+  /* ====== HERO BANNER (mic avatar style) ====== */
   .hero{
+    position:relative;
     text-align:center;
-    background: linear-gradient(180deg, #CFE3EE 0%, #CFE3EE 55%, var(--paper) 55%);
-    padding:30px 18px 26px;
+    background:#CFE3EE;
+    padding:36px 18px 30px;
   }
+  .admin-link{
+    position:absolute; top:14px; right:14px;
+    background:rgba(255,255,255,0.6); border:1px solid rgba(27,42,74,0.15);
+    color:var(--ink); font-size:0.72rem; font-weight:700;
+    padding:6px 12px; border-radius:999px; cursor:pointer;
+    display:flex; align-items:center; gap:4px;
+    transition:background .15s ease;
+  }
+  .admin-link:hover{ background:#fff; }
   .hero .crest{
     width:84px; height:84px; margin:0 auto 14px;
     border-radius:50%;
-    background:var(--paper);
-    border:3px solid #fff;
+    background:#fff;
     display:flex; align-items:center; justify-content:center;
     box-shadow:0 6px 18px -8px rgba(27,42,74,0.4);
   }
-  .hero .crest svg{ width:44px; height:44px; }
+  .hero .crest svg{ width:38px; height:38px; }
   .hero h1{
-    font-size:1.7rem; color:var(--ink); margin-bottom:10px;
+    font-size:1.7rem; color:var(--ink); margin-bottom:6px;
   }
-  .hero .badge{
-    display:inline-block;
-    font-size:0.72rem; font-weight:700; color:var(--coral);
-    border:1px solid var(--coral); border-radius:999px;
-    padding:3px 14px; margin-bottom:12px;
-  }
-  .hero p.sub{
-    font-size:0.85rem; color:#555; max-width:440px; margin:0 auto;
-    line-height:1.65; text-align:left;
+  .hero .tagline-sub{
+    font-size:0.95rem; color:#5b6b7a;
   }
 
-  /* ====== STREAM LIST (home page list, e-Granthalay style) ====== */
-  .stream-list{
-    max-width:520px; margin:0 auto; padding:6px 18px 8px;
+  /* ====== SEARCH BAR & LANGUAGE BAR ====== */
+  main{ display:block; }
+  .search-bar, .lang-bar{
+    max-width:560px; margin:0 auto; padding:14px 18px 0;
   }
-  .stream-row{
-    display:flex; align-items:center; justify-content:space-between;
+  .search-bar input, .lang-bar select{
+    width:100%; font-size:0.92rem; font-family:inherit;
+    padding:13px 16px; border-radius:12px;
+    border:1px solid var(--line); background:var(--card);
+    color:var(--charcoal); outline:none;
+    box-shadow:0 2px 8px -4px rgba(27,42,74,0.15);
+  }
+  .lang-bar select{ cursor:pointer; appearance:auto; }
+  .search-bar input:focus, .lang-bar select:focus{ border-color:var(--coral); }
+
+  /* ====== STREAMS HEADING & PILL GRID ====== */
+  .streams-heading{
+    max-width:560px; margin:22px auto 10px; padding:0 18px;
+    font-size:1.25rem; color:var(--ink); font-family:Georgia,serif;
+  }
+  .stream-list{
+    max-width:560px; margin:0 auto; padding:0 18px 8px;
+    display:flex; flex-wrap:wrap; gap:10px;
+  }
+  .stream-pill{
     background:var(--card);
     border:1px solid var(--line);
-    border-radius:10px;
-    padding:14px 18px;
-    margin-bottom:10px;
+    border-radius:12px;
+    padding:14px 20px;
+    font-size:0.92rem; font-weight:600; color:var(--ink);
     cursor:pointer;
-    transition:border-color .15s ease, transform .1s ease;
+    box-shadow:0 2px 8px -4px rgba(27,42,74,0.12);
+    transition:border-color .15s ease, transform .1s ease, background .15s ease;
+    display:flex; align-items:center; gap:8px;
   }
-  .stream-row:hover{ border-color:var(--coral); transform:translateX(2px); }
-  .stream-row.active{ border-color:var(--ink); background:rgba(27,42,74,0.04); }
-  .stream-row .label{
-    display:flex; align-items:center; gap:12px;
-    font-size:0.98rem; font-weight:600; color:var(--ink);
-  }
-  .stream-row .label .icon{ font-size:1.2rem; }
-  .stream-row .arrow{ color:var(--coral); font-size:1.1rem; }
-
-  .scan-locations{
-    display:flex; flex-wrap:wrap; gap:8px; justify-content:center;
-    margin-top:18px; max-width:520px; margin-left:auto; margin-right:auto; padding:0 18px;
-  }
-  .loc-pill{
-    font-size:0.72rem; font-weight:600; color:var(--ink);
-    background:rgba(143,166,142,0.25);
-    border:1px solid rgba(143,166,142,0.5);
-    padding:5px 12px; border-radius:999px;
-  }
+  .stream-pill .icon{ font-size:1.05rem; }
+  .stream-pill:hover{ border-color:var(--coral); transform:translateY(-1px); }
+  .stream-pill.active{ border-color:var(--ink); background:rgba(27,42,74,0.05); }
 
   /* ====== SECTION HEADERS ====== */
   .section{ padding:30px 18px; max-width:760px; margin:0 auto; }
@@ -214,34 +194,119 @@
   .play-btn:hover{ background:#cf5230; }
   .play-btn svg{ width:12px; height:12px; }
 
-  .inline-player{
-    margin-top:10px; border-radius:10px; overflow:hidden;
-    background:#000; display:none;
+  .actions{
+    display:flex; align-items:center; gap:8px; margin-top:8px; flex-wrap:wrap;
   }
-  .inline-player.open{ display:block; }
-  .inline-player iframe{
-    display:block; width:100%; height:220px; border:0;
+  .actions .play-btn{ margin-top:0; }
+  .icon-btn{
+    background:var(--card); border:1px solid var(--line); color:var(--ink);
+    width:34px; height:34px; border-radius:999px; cursor:pointer;
+    font-size:1rem; line-height:1; display:flex; align-items:center; justify-content:center;
+    transition:all .15s ease; flex:0 0 auto;
   }
-  .player-note{
-    font-size:0.68rem; color:#999; margin-top:6px; line-height:1.4;
+  .icon-btn:hover{ border-color:var(--coral); }
+  .icon-btn.active{ background:var(--coral); color:#fff; border-color:var(--coral); }
+  .copy-note{
+    font-size:0.7rem; color:var(--sage); font-weight:700; margin-top:6px;
   }
-  .player-note a{ color:var(--coral); text-decoration:none; font-weight:600; }
+  .empty-msg{
+    color:#888; font-size:0.9rem; padding:20px 4px; text-align:center;
+    grid-column:1/-1;
+  }
 
-  /* ====== HOW IT WORKS ====== */
-  .how{
-    background:var(--ink); color:var(--paper); padding:40px 18px;
+  /* ====== ADMIN CONSOLE ====== */
+  .admin-wrap{ max-width:1100px; margin:0 auto; padding:22px 18px 40px; }
+
+  .stat-grid{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:14px; margin-bottom:20px;
   }
-  .how-inner{ max-width:760px; margin:0 auto; }
-  .how h2{ font-size:1.35rem; margin-bottom:22px; }
-  .steps{ display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:18px; }
-  .step{
-    border-left:3px solid var(--coral); padding-left:14px;
+  .stat-card{
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:16px; display:flex; align-items:center; gap:12px;
+    box-shadow:0 2px 10px -6px rgba(27,42,74,0.15);
   }
-  .step .num{
-    font-family:Georgia,serif; font-size:1.6rem; color:var(--coral); display:block; margin-bottom:4px;
+  .stat-icon{
+    width:42px; height:42px; border-radius:10px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.2rem; flex:0 0 auto;
   }
-  .step h3{ font-size:0.95rem; margin-bottom:4px; font-family:Georgia,serif; }
-  .step p{ font-size:0.8rem; opacity:0.78; line-height:1.4; }
+  .stat-label{
+    font-size:0.62rem; font-weight:700; letter-spacing:0.08em;
+    color:#888; text-transform:uppercase;
+  }
+  .stat-value{ font-size:1.35rem; font-weight:700; color:var(--ink); font-family:Georgia,serif; }
+
+  .admin-columns{
+    display:grid; grid-template-columns:1.4fr 1fr; gap:18px;
+    align-items:start;
+  }
+  @media (max-width:800px){ .admin-columns{ grid-template-columns:1fr; } }
+
+  .admin-card{
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:20px; box-shadow:0 2px 10px -6px rgba(27,42,74,0.12);
+  }
+  .admin-card h3{
+    font-size:1.05rem; color:var(--ink); margin-bottom:14px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .admin-desc{ font-size:0.82rem; color:#666; margin-bottom:14px; line-height:1.5; }
+
+  .admin-card label{
+    display:block; font-size:0.65rem; font-weight:700; letter-spacing:0.06em;
+    color:#888; text-transform:uppercase; margin:12px 0 6px;
+  }
+  .admin-card input, .admin-card select, .admin-card textarea{
+    width:100%; font-size:0.88rem; font-family:inherit;
+    padding:10px 12px; border-radius:8px;
+    border:1px solid var(--line); background:#FBFAF7;
+    color:var(--charcoal); outline:none; resize:vertical;
+  }
+  .admin-card input:focus, .admin-card select:focus, .admin-card textarea:focus{
+    border-color:var(--coral);
+  }
+  .form-row{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:10px;
+  }
+  .deploy-btn{
+    margin-top:18px; width:100%;
+    background:var(--coral); color:#fff; border:none;
+    font-weight:700; font-size:0.9rem;
+    padding:12px 16px; border-radius:10px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    transition:background .15s ease;
+  }
+  .deploy-btn:hover{ background:#cf5230; }
+  .deploy-note{
+    margin-top:10px; font-size:0.8rem; font-weight:600; color:var(--sage);
+    text-align:center;
+  }
+
+  .admin-talk-list{ margin-top:10px; display:flex; flex-direction:column; gap:8px; max-height:260px; overflow-y:auto; }
+  .admin-talk-row{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    background:#FBFAF7; border:1px solid var(--line); border-radius:8px;
+    padding:8px 12px; font-size:0.8rem;
+  }
+  .admin-talk-row .at-info{ overflow:hidden; }
+  .admin-talk-row .at-title{ font-weight:700; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .admin-talk-row .at-meta{ font-size:0.7rem; color:#888; }
+  .admin-talk-row button{
+    flex:0 0 auto; background:none; border:1px solid var(--line); border-radius:6px;
+    color:#c0392b; cursor:pointer; font-size:0.72rem; padding:4px 8px;
+  }
+  .admin-talk-row button:hover{ border-color:#c0392b; }
+  .admin-empty{ font-size:0.8rem; color:#999; text-align:center; padding:14px 0; }
+
+  .qr-output{
+    margin-top:16px; border:1px dashed var(--line); border-radius:12px;
+    min-height:220px; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:10px; color:#aaa; font-size:0.7rem; font-weight:700; letter-spacing:0.08em; text-align:center;
+    padding:16px;
+  }
+  .qr-output img{ width:180px; height:180px; border-radius:8px; }
+  .qr-output .qr-link{ font-size:0.7rem; color:var(--coral); word-break:break-all; font-weight:600; letter-spacing:normal; }
 
   /* ====== FOOTER ====== */
   footer{
@@ -259,14 +324,27 @@
 </head>
 <body>
 
-<header>
-  <div class="brand">
-    <div class="mark">KB</div>
-    <div>
-      <div class="name">Knowledge Box</div>
-      <div class="tag">Scan. Listen. Learn.</div>
-    </div>
+<section class="hero">
+  <button class="admin-link" id="adminToggle" type="button">⚙ <span data-i18n="adminLink">Admin</span></button>
+  <div class="crest">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#8FA68E" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="9" y="2" width="6" height="11" rx="3"/>
+      <path d="M5 10a7 7 0 0 0 14 0"/>
+      <line x1="12" y1="17" x2="12" y2="21"/>
+      <line x1="8" y1="21" x2="16" y2="21"/>
+    </svg>
   </div>
+  <h1 data-i18n="heroTitle">प्रज्ञावाणी</h1>
+  <p class="tagline-sub" data-i18n="tagline">Learn • Listen • Grow</p>
+</section>
+
+<main id="studentView">
+
+<div class="search-bar">
+  <input type="search" id="searchInput" data-i18n-placeholder="searchPlaceholder" placeholder="🔍 Search talks, speakers, topics..." />
+</div>
+
+<div class="lang-bar">
   <select class="lang-select" id="langSelect" aria-label="Choose language">
     <option value="en">English</option>
     <option value="hi">हिन्दी</option>
@@ -274,37 +352,12 @@
     <option value="es">Español</option>
     <option value="fr">Français</option>
   </select>
-</header>
-
-<section class="hero">
-  <div class="crest">
-    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-      <path d="M50 20 L60 28 L60 70 L50 65 L40 70 L40 28 Z" fill="#1B2A4A"/>
-      <circle cx="35" cy="22" r="3" fill="#E8633C"/>
-      <circle cx="65" cy="22" r="3" fill="#E8633C"/>
-      <circle cx="50" cy="14" r="3" fill="#E8633C"/>
-      <circle cx="22" cy="30" r="3" fill="#E8633C"/>
-      <circle cx="78" cy="30" r="3" fill="#E8633C"/>
-    </svg>
-  </div>
-  <div class="badge" data-i18n="badge">अभिनव उपक्रम</div>
-  <h1 data-i18n="heroTitle">ज्ञान-पेटी</h1>
-  <p class="sub" data-i18n="heroSub">
-    या क्यूआर (QR) कोडद्वारे उपलब्ध करून दिलेले सर्व व्याख्याने (Talks) आणि पॉडकास्ट
-    विद्यार्थ्यांच्या प्रत्येक शाखेसाठी निवडलेले आहेत. खाली तुमची शाखा निवडा आणि
-    सुमारे २० मिनिटांचे ऑडिओ ऐका — कॉफी, जेवण किंवा वर्गाची वाट पाहताना.
-  </p>
-</section>
-
-<div class="stream-list" id="streamList">
-  <!-- stream rows injected by JS -->
 </div>
 
-<div class="scan-locations">
-  <span class="loc-pill" data-i18n="locCafe">☕ Cafés</span>
-  <span class="loc-pill" data-i18n="locCollege">🎓 Colleges</span>
-  <span class="loc-pill" data-i18n="locLibrary">📚 Libraries</span>
-  <span class="loc-pill" data-i18n="locWaiting">🚏 Waiting areas</span>
+<h2 class="streams-heading" data-i18n="streamsHeading">Streams</h2>
+
+<div class="stream-list" id="streamList">
+  <!-- stream pills injected by JS -->
 </div>
 
 <div class="section" id="talksSection" style="display:none;">
@@ -319,31 +372,99 @@
   <div class="grid" id="grid"></div>
 </div>
 
-<section class="how">
-  <div class="how-inner">
-    <h2 data-i18n="howTitle">How ShelfTalks works</h2>
-    <div class="steps">
-      <div class="step">
-        <span class="num">01</span>
-        <h3 data-i18n="step1h">Find a code</h3>
-        <p data-i18n="step1p">Stuck on a wall in your café, canteen, library or notice board — wherever there's a short wait.</p>
+</main>
+
+<section id="adminView" style="display:none;">
+  <div class="admin-wrap">
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(27,42,74,0.08); color:var(--ink);">👥</div>
+        <div>
+          <div class="stat-label" data-i18n="statListeners">TOTAL PORTAL LISTENERS</div>
+          <div class="stat-value" id="statListeners">0</div>
+        </div>
       </div>
-      <div class="step">
-        <span class="num">02</span>
-        <h3 data-i18n="step2h">Scan with your camera</h3>
-        <p data-i18n="step2p">No app to install. Opens straight in your browser, ready to play.</p>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(232,99,60,0.12); color:var(--coral);">🎵</div>
+        <div>
+          <div class="stat-label" data-i18n="statModules">PUBLISHED MODULES</div>
+          <div class="stat-value" id="statModules">0</div>
+        </div>
       </div>
-      <div class="step">
-        <span class="num">03</span>
-        <h3 data-i18n="step3h">Pick your stream</h3>
-        <p data-i18n="step3p">Science, engineering, medicine, commerce, arts, management, law and more — talks chosen for what you study.</p>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(143,166,142,0.18); color:var(--sage);">▦</div>
+        <div>
+          <div class="stat-label" data-i18n="statQR">QR CODE SCAN METRIC</div>
+          <div class="stat-value" id="statQR">0</div>
+        </div>
       </div>
-      <div class="step">
-        <span class="num">04</span>
-        <h3 data-i18n="step4h">Listen for ~20 minutes</h3>
-        <p data-i18n="step4p">One sharp idea, one real story, one thing you can use — in your language.</p>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(143,120,200,0.15); color:#8E7BCF;">📈</div>
+        <div>
+          <div class="stat-label" data-i18n="statTokens">AI TOKENS PROCESSED</div>
+          <div class="stat-value" id="statTokens">0</div>
+        </div>
       </div>
     </div>
+
+    <div class="admin-columns">
+      <div class="admin-card">
+        <h3>📤 <span data-i18n="deployTitle">Resource Deployment Center</span></h3>
+
+        <label data-i18n="lblTitle">PODCAST MODULE TITLE</label>
+        <input type="text" id="aTitle" data-i18n-placeholder="phTitle" placeholder="e.g. Patent Filing Architecture">
+
+        <label data-i18n="lblSpeaker">SPEAKER / AUTHORITY PROFILE</label>
+        <input type="text" id="aSpeaker" data-i18n-placeholder="phSpeaker" placeholder="e.g. Dr. A. M. Gurav">
+
+        <div class="form-row">
+          <div>
+            <label data-i18n="lblStream">STREAM CLASSIFICATION</label>
+            <select id="aStream"></select>
+          </div>
+          <div>
+            <label data-i18n="lblLang">BROADCAST LANGUAGE</label>
+            <select id="aLang">
+              <option value="en">English</option>
+              <option value="hi">हिन्दी</option>
+              <option value="mr">मराठी</option>
+            </select>
+          </div>
+          <div>
+            <label data-i18n="lblDuration">DURATION (MIN)</label>
+            <input type="number" id="aDuration" min="1" max="120" value="10">
+          </div>
+        </div>
+
+        <label data-i18n="lblYoutube">YOUTUBE VIDEO URL OR ID</label>
+        <input type="text" id="aYoutube" data-i18n-placeholder="phYoutube" placeholder="https://www.youtube.com/watch?v=...">
+
+        <label data-i18n="lblDesc">ABSTRACT DESCRIPTION & CURRICULUM SCOPE</label>
+        <textarea id="aDesc" rows="3" data-i18n-placeholder="phDesc" placeholder="Detailed syllabus or abstract analysis breakdown..."></textarea>
+
+        <button class="deploy-btn" id="deployBtn" type="button">🚀 <span data-i18n="deployBtn">Deploy Module</span></button>
+        <div class="deploy-note" id="deployNote" style="display:none;"></div>
+
+        <h3 style="margin-top:26px;" data-i18n="manageTitle">📋 Manage Deployed Modules</h3>
+        <div id="adminTalkList" class="admin-talk-list"></div>
+      </div>
+
+      <div class="admin-card">
+        <h3>▦ <span data-i18n="qrTitle">QR Studio Engine</span></h3>
+        <p class="admin-desc" data-i18n="qrDesc">Generate a scannable QR code for the platform, a stream, or any talk — print it for cafés, colleges and libraries.</p>
+
+        <label data-i18n="lblQrScope">QR TARGET REFERENCE SCOPE</label>
+        <select id="qrScope"></select>
+
+        <button class="deploy-btn" id="qrGenBtn" type="button">🔄 <span data-i18n="qrGenBtn">Generate QR Code</span></button>
+
+        <div class="qr-output" id="qrOutput">
+          <span data-i18n="qrStandby">QR OUTPUT — STANDBY</span>
+        </div>
+      </div>
+    </div>
+
   </div>
 </section>
 
@@ -410,16 +531,29 @@ const TALKS = [
   { stream:"law", speaker:"Bryan Stevenson", duration:23, title:{en:"We Need to Talk About an Injustice", hi:"हमें अन्याय के बारे में बात करनी चाहिए", mr:"आपण अन्यायाबद्दल बोलायला हवे"}, desc:{en:"A public-interest lawyer on identity, justice and reforming the legal system.", hi:"पहचान, न्याय और कानूनी सुधार पर एक पब्लिक-इंटरेस्ट वकील की बात।", mr:"ओळख, न्याय आणि कायदा सुधारणा यावर एका सार्वजनिक हित वकिलाचे विचार."}, url:"https://www.ted.com/talks/bryan_stevenson_we_need_to_talk_about_an_injustice", yt:"c2tOp7OxyQ8" },
   { stream:"law", speaker:"Lawrence Lessig", duration:18, title:{en:"We the People, and the Republic We Must Reclaim", hi:"हम लोग, और वह गणराज्य जिसे हमें फिर से पाना है", mr:"आम्ही लोक, आणि पुन्हा मिळवायचे प्रजासत्ताक"}, desc:{en:"A law professor on money, influence, and reforming political systems.", hi:"पैसा, प्रभाव और राजनीतिक सिस्टम सुधार पर एक लॉ प्रोफेसर की बात।", mr:"पैसा, प्रभाव आणि राजकीय व्यवस्था सुधारणा यावर एका कायदा प्राध्यापकाचे विचार."}, url:"https://www.ted.com/talks/lawrence_lessig_we_the_people_and_the_republic_we_must_reclaim", yt:"mw2z9lV3W1g" },
   { stream:"law", speaker:"Anne Milgram", duration:13, title:{en:"Why Smart Statistics Are the Key to Fighting Crime", hi:"अपराध से लड़ने की कुंजी है स्मार्ट स्टैटिस्टिक्स", mr:"गुन्ह्यांशी लढण्याची किल्ली: स्मार्ट आकडेवारी"}, desc:{en:"A former attorney general on bringing data and moneyball thinking to justice systems.", hi:"न्याय व्यवस्था में डेटा और 'मनीबॉल' सोच लाने पर एक पूर्व अटॉर्नी जनरल की बात।", mr:"न्यायव्यवस्थेत डेटा आणि 'मनीबॉल' विचारसरणी आणण्यावर एका माजी अॅटर्नी जनरलचे विचार."}, url:"https://www.ted.com/talks/anne_milgram_why_smart_statistics_are_the_key_to_fighting_crime", yt:"ZJNESMhIxQ0" },
-  { stream:"law", speaker:"Gauri Sawant", duration:12, title:{en:"Transgender Rights in India", hi:"भारत में ट्रांसजेंडर अधिकार", mr:"भारतातील ट्रान्सजेंडर हक्क"}, desc:{en:"An Indian activist on the gaps in gender law and why they urgently need reform.", hi:"जेंडर कानून में मौजूद कमियों और उनमें सुधार की ज़रूरत पर एक भारतीय एक्टिविस्ट की बात।", mr:"लिंग कायद्यातील त्रुटी आणि त्यात सुधारणा का आवश्यक आहे, यावर एका भारतीय कार्यकर्तीचे विचार."}, url:"https://www.ted.com/talks/gauri_sawant_transgender_rights_in_india", yt:"TpNk1LGMVYk" }
+  { stream:"law", speaker:"Gauri Sawant", duration:12, title:{en:"Transgender Rights in India", hi:"भारत में ट्रांसजेंडर अधिकार", mr:"भारतातील ट्रान्सजेंडर हक्क"}, desc:{en:"An Indian activist on the gaps in gender law and why they urgently need reform.", hi:"जेंडर कानून में मौजूद कमियों और उनमें सुधार की ज़रूरत पर एक भारतीय एक्टिविस्ट की बात।", mr:"लिंग कायद्यातील त्रुटी आणि त्यात सुधारणा का आवश्यक आहे, यावर एका भारतीय कार्यकर्तीचे विचार."}, url:"https://www.ted.com/talks/gauri_sawant_transgender_rights_in_india", yt:"TpNk1LGMVYk" },
+
+  // ===== COMPETITIVE EXAMS =====
+  { stream:"competitive", speaker:"Angela Lee Duckworth", duration:6, title:{en:"Grit: The Power of Passion and Perseverance", hi:"ग्रिट: जोश और दृढ़ता की ताकत", mr:"ग्रिट: उत्कटता आणि चिकाटीची ताकत"}, desc:{en:"Why perseverance — not just talent — predicts who clears the toughest exams.", hi:"सिर्फ टैलेंट नहीं, दृढ़ता ही तय करती है कि कौन सबसे कठिन परीक्षा पास करेगा।", mr:"फक्त कौशल्य नाही, चिकाटीच ठरवते सर्वात कठीण परीक्षा कोण उत्तीर्ण होतो."}, url:"https://www.ted.com/talks/angela_lee_duckworth_grit_the_power_of_passion_and_perseverance", yt:"H14bBuluwB8" },
+  { stream:"competitive", speaker:"Tim Urban", duration:14, title:{en:"Inside the Mind of a Master Procrastinator", hi:"एक मास्टर प्रोक्रैस्टिनेटर के दिमाग के भीतर", mr:"मास्टर प्रोक्रॅस्टिनेटरच्या मनात डोकावताना"}, desc:{en:"A funny, honest look at why we delay studying — and how to outsmart it before exam day.", hi:"हम पढ़ाई क्यों टालते हैं — और परीक्षा से पहले इसे कैसे मात दें — एक मज़ेदार, ईमानदार नज़र।", mr:"आपण अभ्यास का टाळतो — आणि परीक्षेपूर्वी त्यावर मात कशी करावी — एक मजेदार, प्रामाणिक दृष्टिकोन."}, url:"https://www.ted.com/talks/tim_urban_inside_the_mind_of_a_master_procrastinator", yt:"arj7oStGLkU" },
+  { stream:"competitive", speaker:"Barbara Oakley", duration:17, title:{en:"Learning How to Learn", hi:"सीखना कैसे सीखें", mr:"शिकणं कसं शिकावं"}, desc:{en:"An engineer who flunked math explains the brain science behind effective study techniques.", hi:"गणित में फेल हुई एक इंजीनियर बताती हैं असरदार पढ़ाई के पीछे का ब्रेन साइंस।", mr:"गणितात नापास झालेली एक इंजिनिअर प्रभावी अभ्यास पद्धतींमागील मेंदूविज्ञान सांगते."}, url:"https://www.ted.com/talks/barbara_oakley_learning_how_to_learn", yt:"O96fE1E-rf8" },
+
+  // ===== MOTIVATION =====
+  { stream:"motivation", speaker:"Mel Robbins", duration:20, title:{en:"How to Stop Screwing Yourself Over", hi:"खुद को नुकसान पहुंचाना कैसे बंद करें", mr:"स्वतःचे नुकसान करणे कसे थांबवावे"}, desc:{en:"A no-nonsense talk on ditching excuses and taking action on what you really want.", hi:"बहाने छोड़ने और जो आप सच में चाहते हैं उस पर काम करने पर एक सीधी-सच्ची बात।", mr:"सबबी सोडून तुम्हाला खरंच जे हवं आहे त्यावर काम करण्याबद्दल थेट विचार."}, url:"https://www.ted.com/talks/mel_robbins_how_to_stop_screwing_yourself_over", yt:"Lp7E973zozc" },
+  { stream:"motivation", speaker:"Matt Cutts", duration:3, title:{en:"Try Something New for 30 Days", hi:"30 दिनों तक कुछ नया आज़माएं", mr:"30 दिवस काहीतरी नवीन करून पाहा"}, desc:{en:"A tiny habit-change idea that can turn 'someday' goals into 'this month' wins.", hi:"एक छोटा सा आदत-बदलाव आइडिया जो 'कभी न कभी' के लक्ष्य को 'इस महीने' में बदल सकता है।", mr:"एक लहान सवय-बदलणारी कल्पना जी 'कधीतरी'च्या ध्येयाला 'या महिन्यात' पूर्ण करू शकते."}, url:"https://www.ted.com/talks/matt_cutts_try_something_new_for_30_days", yt:"UNP03fDSj1U" },
+  { stream:"motivation", speaker:"Shawn Achor", duration:12, title:{en:"The Happy Secret to Better Work", hi:"बेहतर काम का खुशहाल राज़", mr:"चांगल्या कामगिरीचे आनंदी रहस्य"}, desc:{en:"Happiness isn't the reward for success — a psychologist argues it's the fuel for it.", hi:"खुशी सफलता का इनाम नहीं — एक मनोवैज्ञानिक कहते हैं यह सफलता का ईंधन है।", mr:"आनंद हे यशाचे बक्षीस नाही — ते यशाचे इंधन आहे, असे एक मनोवैज्ञानिक सांगतात."}, url:"https://www.ted.com/talks/shawn_achor_the_happy_secret_to_better_work", yt:"fLJsdqxnZb0" }
 ];
+TALKS.forEach((talk, i)=>{ talk.id = i; });
 
 /* ===================== TRANSLATIONS (UI strings) ===================== */
 const I18N = {
   en:{
-    badge:"A New Initiative",
-    heroTitle:"The Knowledge Box",
+    appName:"Pragyavani", tagline:"Learn • Listen • Grow",
+    streamsHeading:"Streams", adminLink:"Admin", studentLink:"Student View",
+    heroTitle:"Pragyavani",
     heroSub:"All the talks and podcasts available through this QR code are picked for every stream of study. Choose your stream below and listen to about 20 minutes of audio — while you wait for coffee, your meal, or your class.",
-    locCafe:"☕ Cafés", locCollege:"🎓 Colleges", locLibrary:"📚 Libraries", locWaiting:"🚏 Waiting areas",
+    searchPlaceholder:"🔍 Search talks, speakers, topics...",
+    searchResultsFor:"Search results for", noResults:"No talks found. Try a different keyword.",
     streamScience:"Science",
     streamEngineering:"Engineering",
     streamMedical:"Medical",
@@ -428,20 +562,33 @@ const I18N = {
     streamArts:"Arts & Humanities",
     streamSocial:"Social Science",
     streamLaw:"Law",
+    streamCompetitive:"Competitive Exams",
+    streamMotivation:"Motivation",
+    streamSaved:"Saved Talks",
     backBtn:"← All streams",
-    howTitle:"How it works",
-    step1h:"Find a code", step1p:"Stuck on a wall in your café, canteen, library or notice board — wherever there's a short wait.",
-    step2h:"Scan with your camera", step2p:"No app to install. Opens straight in your browser, ready to play.",
-    step3h:"Pick your stream", step3p:"Science, engineering, medicine, commerce, arts, management, law and more — talks chosen for what you study.",
-    step4h:"Listen for ~20 minutes", step4p:"One sharp idea, one real story, one thing you can use — in your language.",
-    footerBrand:"The Knowledge Box", footerLine:"made for the 20 minutes you didn't know you had",
-    playBtn:"Listen", min:"min", openBtn:"Open talk", playerNote:"This opens the official TED page where the talk can be streamed or downloaded free, with audio in multiple languages."
+    footerBrand:"Pragyavani", footerLine:"made for the 20 minutes you didn't know you had",
+    playBtn:"Listen", min:"min", openBtn:"Open talk", playerNote:"This opens the official TED page where the talk can be streamed or downloaded free, with audio in multiple languages.",
+    saveBtn:"Save", savedBtn:"Saved", shareBtn:"Share", copiedMsg:"Link copied!", noSaved:"You haven't saved any talks yet. Tap 'Save' on a talk to add it here.",
+    statListeners:"TOTAL PORTAL LISTENERS", statModules:"PUBLISHED MODULES", statQR:"QR CODE SCAN METRIC", statTokens:"AI TOKENS PROCESSED",
+    deployTitle:"Resource Deployment Center",
+    lblTitle:"PODCAST MODULE TITLE", phTitle:"e.g. Patent Filing Architecture",
+    lblSpeaker:"SPEAKER / AUTHORITY PROFILE", phSpeaker:"e.g. Dr. A. M. Gurav",
+    lblStream:"STREAM CLASSIFICATION", lblLang:"BROADCAST LANGUAGE", lblDuration:"DURATION (MIN)",
+    lblYoutube:"YOUTUBE VIDEO URL OR ID", phYoutube:"https://www.youtube.com/watch?v=...",
+    lblDesc:"ABSTRACT DESCRIPTION & CURRICULUM SCOPE", phDesc:"Detailed syllabus or abstract analysis breakdown...",
+    deployBtn:"Deploy Module", deployedMsg:"✅ Module deployed successfully!", deployError:"Please fill in title, speaker and a valid YouTube link.",
+    manageTitle:"📋 Manage Deployed Modules", adminEmpty:"No admin-deployed modules yet.", removeBtn:"Remove",
+    qrTitle:"QR Studio Engine", qrDesc:"Generate a scannable QR code for the platform, a stream, or any talk — print it for cafés, colleges and libraries.",
+    lblQrScope:"QR TARGET REFERENCE SCOPE", qrGenBtn:"Generate QR Code", qrStandby:"QR OUTPUT — STANDBY",
+    qrGlobal:"Global Platform URL", qrStreamPrefix:"Stream:"
   },
   hi:{
-    badge:"अभिनव उपक्रम",
-    heroTitle:"ज्ञान-पेटी",
+    appName:"प्रज्ञावाणी", tagline:"सीखो • सुनो • आगे बढ़ो",
+    streamsHeading:"स्ट्रीम्स", adminLink:"एडमिन", studentLink:"स्टूडेंट व्यू",
+    heroTitle:"प्रज्ञावाणी",
     heroSub:"इस क्यूआर कोड के माध्यम से उपलब्ध सभी टॉक्स और पॉडकास्ट हर पढ़ाई की स्ट्रीम के लिए चुने गए हैं। नीचे अपनी स्ट्रीम चुनें और लगभग 20 मिनट का ऑडियो सुनें — कॉफी, खाने या क्लास का इंतज़ार करते हुए।",
-    locCafe:"☕ कैफ़े", locCollege:"🎓 कॉलेज", locLibrary:"📚 लाइब्रेरी", locWaiting:"🚏 वेटिंग एरिया",
+    searchPlaceholder:"🔍 टॉक्स, स्पीकर, टॉपिक्स खोजें...",
+    searchResultsFor:"इसके लिए खोज परिणाम", noResults:"कोई टॉक नहीं मिली। दूसरा कीवर्ड आज़माएं।",
     streamScience:"विज्ञान",
     streamEngineering:"इंजीनियरिंग",
     streamMedical:"मेडिकल",
@@ -450,20 +597,21 @@ const I18N = {
     streamArts:"कला एवं मानविकी",
     streamSocial:"समाजशास्त्र",
     streamLaw:"कानून",
+    streamCompetitive:"प्रतियोगी परीक्षाएं",
+    streamMotivation:"मोटिवेशन",
+    streamSaved:"सेव्ड टॉक्स",
     backBtn:"← सभी स्ट्रीम्स",
-    howTitle:"यह कैसे काम करता है",
-    step1h:"कोड ढूंढें", step1p:"आपके कैफ़े, कैंटीन, लाइब्रेरी या नोटिस बोर्ड की दीवार पर — जहाँ भी थोड़ा इंतज़ार हो।",
-    step2h:"कैमरे से स्कैन करें", step2p:"कोई ऐप इंस्टॉल नहीं करना। सीधे ब्राउज़र में खुलेगा, सुनने के लिए तैयार।",
-    step3h:"अपनी स्ट्रीम चुनें", step3p:"विज्ञान, इंजीनियरिंग, मेडिकल, कॉमर्स, आर्ट्स, मैनेजमेंट, लॉ और भी — आपकी पढ़ाई के अनुसार चुनी गई टॉक्स।",
-    step4h:"लगभग 20 मिनट सुनें", step4p:"एक सटीक आइडिया, एक सच्ची कहानी, एक काम की बात — आपकी भाषा में।",
-    footerBrand:"ज्ञान-पेटी", footerLine:"उन 20 मिनटों के लिए बनाया गया जो आपको पता ही नहीं था कि आपके पास हैं",
-    playBtn:"सुनें", min:"मिनट", openBtn:"टॉक खोलें", playerNote:"यह TED के आधिकारिक पेज पर खुलेगा जहाँ टॉक मुफ्त में सुनी या डाउनलोड की जा सकती है, कई भाषाओं के ऑडियो के साथ।"
+    footerBrand:"प्रज्ञावाणी", footerLine:"उन 20 मिनटों के लिए बनाया गया जो आपको पता ही नहीं था कि आपके पास हैं",
+    playBtn:"सुनें", min:"मिनट", openBtn:"टॉक खोलें", playerNote:"यह TED के आधिकारिक पेज पर खुलेगा जहाँ टॉक मुफ्त में सुनी या डाउनलोड की जा सकती है, कई भाषाओं के ऑडियो के साथ।",
+    saveBtn:"सेव करें", savedBtn:"सेव्ड", shareBtn:"शेयर करें", copiedMsg:"लिंक कॉपी हो गई!", noSaved:"आपने अभी तक कोई टॉक सेव नहीं की है। यहाँ जोड़ने के लिए किसी टॉक पर 'सेव करें' दबाएं।"
   },
   mr:{
-    badge:"अभिनव उपक्रम",
-    heroTitle:"ज्ञान-पेटी",
+    appName:"प्रज्ञावाणी", tagline:"शिका • ऐका • वाढा",
+    streamsHeading:"स्ट्रीम्स", adminLink:"अॅडमिन", studentLink:"स्टुडंट व्ह्यू",
+    heroTitle:"प्रज्ञावाणी",
     heroSub:"या क्यूआर कोडद्वारे उपलब्ध करून दिलेले सर्व व्याख्याने (Talks) आणि पॉडकास्ट विद्यार्थ्यांच्या प्रत्येक शाखेसाठी निवडलेले आहेत. खाली तुमची शाखा निवडा आणि सुमारे २० मिनिटांचे ऑडिओ ऐका — कॉफी, जेवण किंवा वर्गाची वाट पाहताना.",
-    locCafe:"☕ कॅफे", locCollege:"🎓 कॉलेज", locLibrary:"📚 ग्रंथालय", locWaiting:"🚏 प्रतीक्षा कक्ष",
+    searchPlaceholder:"🔍 टॉक्स, स्पीकर्स, विषय शोधा...",
+    searchResultsFor:"यासाठी शोध परिणाम", noResults:"कोणतीही टॉक सापडली नाही. वेगळा कीवर्ड वापरून पाहा.",
     streamScience:"विज्ञान",
     streamEngineering:"अभियांत्रिकी",
     streamMedical:"वैद्यकीय",
@@ -472,59 +620,88 @@ const I18N = {
     streamArts:"कला आणि मानव्यविद्या",
     streamSocial:"समाजशास्त्र",
     streamLaw:"कायदा",
+    streamCompetitive:"स्पर्धा परीक्षा",
+    streamMotivation:"मोटिव्हेशन",
+    streamSaved:"सेव्ह केलेल्या टॉक्स",
     backBtn:"← सर्व शाखा",
-    howTitle:"हे कसे काम करते",
-    step1h:"कोड शोधा", step1p:"तुमच्या कॅफे, कॅन्टीन, ग्रंथालय किंवा नोटीस बोर्डाच्या भिंतीवर — जिथे थोडी प्रतीक्षा असते.",
-    step2h:"कॅमेऱ्याने स्कॅन करा", step2p:"कोणतेही अॅप इन्स्टॉल करण्याची गरज नाही. थेट ब्राउझरमध्ये उघडेल, ऐकण्यासाठी तयार.",
-    step3h:"तुमची शाखा निवडा", step3p:"विज्ञान, अभियांत्रिकी, वैद्यकीय, वाणिज्य, कला, व्यवस्थापन, कायदा आणि बरेच काही — तुमच्या अभ्यासानुसार निवडलेल्या टॉक्स.",
-    step4h:"सुमारे 20 मिनिटे ऐका", step4p:"एक नेमकी कल्पना, एक खरी गोष्ट, एक उपयोगी मुद्दा — तुमच्या भाषेत.",
-    footerBrand:"ज्ञान-पेटी", footerLine:"तुमच्याकडे आहेत हे माहीत नसलेल्या त्या 20 मिनिटांसाठी बनवलेले",
-    playBtn:"ऐका", min:"मिनिटे", openBtn:"टॉक उघडा", playerNote:"हे TED च्या अधिकृत पानावर उघडेल जिथे टॉक मोफत ऐकता किंवा डाउनलोड करता येते, अनेक भाषांमधील ऑडिओसह."
+    footerBrand:"प्रज्ञावाणी", footerLine:"तुमच्याकडे आहेत हे माहीत नसलेल्या त्या 20 मिनिटांसाठी बनवलेले",
+    playBtn:"ऐका", min:"मिनिटे", openBtn:"टॉक उघडा", playerNote:"हे TED च्या अधिकृत पानावर उघडेल जिथे टॉक मोफत ऐकता किंवा डाउनलोड करता येते, अनेक भाषांमधील ऑडिओसह.",
+    saveBtn:"सेव्ह करा", savedBtn:"सेव्ह केले", shareBtn:"शेअर करा", copiedMsg:"लिंक कॉपी झाली!", noSaved:"तुम्ही अजून कोणतीही टॉक सेव्ह केलेली नाही. इथे जोडण्यासाठी टॉकवरील 'सेव्ह करा' दाबा."
   },
   es:{
-    badge:"Una Nueva Iniciativa",
-    heroTitle:"La Caja del Conocimiento",
+    appName:"Pragyavani", tagline:"Aprende • Escucha • Crece",
+    streamsHeading:"Áreas", adminLink:"Admin", studentLink:"Vista Estudiante",
+    heroTitle:"Pragyavani",
     heroSub:"Todas las charlas y podcasts disponibles mediante este código QR están elegidos para cada área de estudio. Elige tu área abajo y escucha unos 20 minutos de audio — mientras esperas tu café, tu comida o tu clase.",
-    locCafe:"☕ Cafeterías", locCollege:"🎓 Universidades", locLibrary:"📚 Bibliotecas", locWaiting:"🚏 Salas de espera",
+    searchPlaceholder:"🔍 Buscar charlas, oradores, temas...",
+    searchResultsFor:"Resultados de búsqueda para", noResults:"No se encontraron charlas. Prueba otra palabra clave.",
     streamScience:"Ciencia", streamEngineering:"Ingeniería", streamMedical:"Medicina",
     streamCommerce:"Comercio y Economía", streamManagement:"Gestión y Emprendimiento",
     streamArts:"Artes y Humanidades", streamSocial:"Ciencias Sociales", streamLaw:"Derecho",
+    streamCompetitive:"Exámenes Competitivos", streamMotivation:"Motivación", streamSaved:"Charlas Guardadas",
     backBtn:"← Todas las áreas",
-    howTitle:"Cómo funciona",
-    step1h:"Encuentra un código", step1p:"En la pared de tu cafetería, cantina, biblioteca o tablón — donde haya una pequeña espera.",
-    step2h:"Escanea con tu cámara", step2p:"Sin instalar nada. Se abre directo en tu navegador, listo para reproducir.",
-    step3h:"Elige tu área", step3p:"Ciencia, ingeniería, medicina, comercio, artes, gestión, derecho y más — charlas elegidas según lo que estudias.",
-    step4h:"Escucha unos 20 minutos", step4p:"Una idea concreta, una historia real, algo que puedas usar — en tu idioma.",
-    footerBrand:"La Caja del Conocimiento", footerLine:"hecho para esos 20 minutos que no sabías que tenías",
-    playBtn:"Escuchar", min:"min", openBtn:"Abrir charla", playerNote:"Esto abre la página oficial de TED donde la charla se puede escuchar o descargar gratis, con audio en varios idiomas."
+    footerBrand:"Pragyavani", footerLine:"hecho para esos 20 minutos que no sabías que tenías",
+    playBtn:"Escuchar", min:"min", openBtn:"Abrir charla", playerNote:"Esto abre la página oficial de TED donde la charla se puede escuchar o descargar gratis, con audio en varios idiomas.",
+    saveBtn:"Guardar", savedBtn:"Guardado", shareBtn:"Compartir", copiedMsg:"¡Enlace copiado!", noSaved:"Aún no has guardado ninguna charla. Toca 'Guardar' en una charla para añadirla aquí."
   },
   fr:{
-    badge:"Une Nouvelle Initiative",
-    heroTitle:"La Boîte à Savoir",
+    appName:"Pragyavani", tagline:"Apprendre • Écouter • Grandir",
+    streamsHeading:"Filières", adminLink:"Admin", studentLink:"Vue Étudiant",
+    heroTitle:"Pragyavani",
     heroSub:"Toutes les conférences et podcasts disponibles via ce code QR sont choisis pour chaque filière d'études. Choisissez votre filière ci-dessous et écoutez environ 20 minutes d'audio — en attendant votre café, votre repas ou votre cours.",
-    locCafe:"☕ Cafés", locCollege:"🎓 Universités", locLibrary:"📚 Bibliothèques", locWaiting:"🚏 Salles d'attente",
+    searchPlaceholder:"🔍 Rechercher conférences, intervenants, sujets...",
+    searchResultsFor:"Résultats de recherche pour", noResults:"Aucune conférence trouvée. Essayez un autre mot-clé.",
     streamScience:"Sciences", streamEngineering:"Ingénierie", streamMedical:"Médecine",
     streamCommerce:"Commerce et Économie", streamManagement:"Management et Entrepreneuriat",
     streamArts:"Arts et Lettres", streamSocial:"Sciences Sociales", streamLaw:"Droit",
+    streamCompetitive:"Examens Compétitifs", streamMotivation:"Motivation", streamSaved:"Conférences Enregistrées",
     backBtn:"← Toutes les filières",
-    howTitle:"Comment ça marche",
-    step1h:"Trouvez un code", step1p:"Sur un mur de votre café, cantine, bibliothèque ou panneau d'affichage — partout où il y a une petite attente.",
-    step2h:"Scannez avec votre caméra", step2p:"Aucune application à installer. S'ouvre directement dans votre navigateur, prêt à lire.",
-    step3h:"Choisissez votre filière", step3p:"Sciences, ingénierie, médecine, commerce, arts, management, droit et plus — des conférences choisies selon vos études.",
-    step4h:"Écoutez environ 20 minutes", step4p:"Une idée précise, une histoire vraie, une chose utile — dans votre langue.",
-    footerBrand:"La Boîte à Savoir", footerLine:"conçu pour ces 20 minutes que vous ne saviez pas avoir",
-    playBtn:"Écouter", min:"min", openBtn:"Ouvrir la conférence", playerNote:"Ceci ouvre la page officielle TED où la conférence peut être écoutée ou téléchargée gratuitement, avec audio en plusieurs langues."
+    footerBrand:"Pragyavani", footerLine:"conçu pour ces 20 minutes que vous ne saviez pas avoir",
+    playBtn:"Écouter", min:"min", openBtn:"Ouvrir la conférence", playerNote:"Ceci ouvre la page officielle TED où la conférence peut être écoutée ou téléchargée gratuitement, avec audio en plusieurs langues.",
+    saveBtn:"Enregistrer", savedBtn:"Enregistré", shareBtn:"Partager", copiedMsg:"Lien copié !", noSaved:"Vous n'avez encore enregistré aucune conférence. Appuyez sur 'Enregistrer' sur une conférence pour l'ajouter ici."
   }
 };
 
 const STREAM_ICONS = {
   science:"🔬", engineering:"⚙️", medical:"🩺", commerce:"💹",
-  management:"📈", arts:"🎭", social:"🌍", law:"⚖️"
+  management:"📈", arts:"🎭", social:"🌍", law:"⚖️",
+  competitive:"📝", motivation:"🌱"
 };
-const STREAM_KEYS = ["science","engineering","medical","commerce","management","arts","social","law"];
+const STREAM_KEYS = ["science","engineering","medical","commerce","management","arts","social","law","competitive","motivation"];
+const STREAM_NAME_KEY = {
+  science:"streamScience", engineering:"streamEngineering", medical:"streamMedical",
+  commerce:"streamCommerce", management:"streamManagement", arts:"streamArts",
+  social:"streamSocial", law:"streamLaw", competitive:"streamCompetitive", motivation:"streamMotivation"
+};
+
+/* ===================== BOOKMARKS (saved talks) ===================== */
+const BOOKMARK_KEY = "pragyavani_bookmarks";
+function getBookmarks(){
+  try{ return JSON.parse(localStorage.getItem(BOOKMARK_KEY)) || []; }catch(e){ return []; }
+}
+function isBookmarked(id){ return getBookmarks().includes(id); }
+function toggleBookmark(id){
+  let marks = getBookmarks();
+  if(marks.includes(id)){ marks = marks.filter(x=>x!==id); }
+  else{ marks.push(id); }
+  localStorage.setItem(BOOKMARK_KEY, JSON.stringify(marks));
+}
+
+/* ===================== ADMIN-DEPLOYED TALKS ===================== */
+const ADMIN_TALKS_KEY = "pragyavani_admin_talks";
+function getAdminTalks(){
+  try{ return JSON.parse(localStorage.getItem(ADMIN_TALKS_KEY)) || []; }catch(e){ return []; }
+}
+function saveAdminTalks(list){
+  localStorage.setItem(ADMIN_TALKS_KEY, JSON.stringify(list));
+}
+function getAllTalks(){
+  return TALKS.concat(getAdminTalks());
+}
 
 let currentLang = "en";
-let currentStream = null; // null = home list view
+let currentStream = null; // null = home list view, "saved" = saved talks, or a stream key
+let searchQuery = "";
 
 /* ===================== RENDER ===================== */
 function applyI18n(){
@@ -533,34 +710,48 @@ function applyI18n(){
     const key = el.getAttribute("data-i18n");
     if(t[key]) el.textContent = t[key];
   });
+  document.querySelectorAll("[data-i18n-placeholder]").forEach(el=>{
+    const key = el.getAttribute("data-i18n-placeholder");
+    if(t[key]) el.placeholder = t[key];
+  });
   renderStreamList();
-  if(currentStream) renderGrid();
+  if(currentStream || searchQuery) renderGrid();
 }
 
 function renderStreamList(){
   const t = I18N[currentLang];
   const list = document.getElementById("streamList");
   list.innerHTML = "";
-  const keyMap = {
-    science:"streamScience", engineering:"streamEngineering", medical:"streamMedical",
-    commerce:"streamCommerce", management:"streamManagement", arts:"streamArts",
-    social:"streamSocial", law:"streamLaw"
-  };
+
+  // "Saved talks" pseudo-stream pill, shown first
+  const savedPill = document.createElement("div");
+  savedPill.className = "stream-pill" + (currentStream === "saved" ? " active" : "");
+  savedPill.innerHTML = `<span class="icon">🔖</span> ${t.streamSaved}`;
+  savedPill.addEventListener("click", ()=>{
+    searchQuery = "";
+    document.getElementById("searchInput").value = "";
+    currentStream = "saved";
+    renderStreamList();
+    renderGrid();
+    document.getElementById("talksSection").style.display = "block";
+    document.getElementById("talksSection").scrollIntoView({behavior:"smooth", block:"start"});
+  });
+  list.appendChild(savedPill);
+
   STREAM_KEYS.forEach(stream=>{
-    const row = document.createElement("div");
-    row.className = "stream-row" + (currentStream === stream ? " active" : "");
-    row.innerHTML = `
-      <span class="label"><span class="icon">${STREAM_ICONS[stream]}</span> ${t[keyMap[stream]]}</span>
-      <span class="arrow">→</span>
-    `;
-    row.addEventListener("click", ()=>{
+    const pill = document.createElement("div");
+    pill.className = "stream-pill" + (currentStream === stream ? " active" : "");
+    pill.innerHTML = `<span class="icon">${STREAM_ICONS[stream]}</span> ${t[STREAM_NAME_KEY[stream]]}`;
+    pill.addEventListener("click", ()=>{
+      searchQuery = "";
+      document.getElementById("searchInput").value = "";
       currentStream = stream;
       renderStreamList();
       renderGrid();
       document.getElementById("talksSection").style.display = "block";
       document.getElementById("talksSection").scrollIntoView({behavior:"smooth", block:"start"});
     });
-    list.appendChild(row);
+    list.appendChild(pill);
   });
 }
 
@@ -568,29 +759,54 @@ function renderGrid(){
   const grid = document.getElementById("grid");
   grid.innerHTML = "";
   const t = I18N[currentLang];
+  const lang3 = ["en","hi","mr"].includes(currentLang) ? currentLang : "en";
 
-  const keyMap = {
-    science:"streamScience", engineering:"streamEngineering", medical:"streamMedical",
-    commerce:"streamCommerce", management:"streamManagement", arts:"streamArts",
-    social:"streamSocial", law:"streamLaw"
-  };
-  const streamName = t[keyMap[currentStream]];
-  document.getElementById("talksEyebrow").textContent = STREAM_ICONS[currentStream] + " " + streamName;
-  document.getElementById("talksTitle").textContent = streamName;
+  let filtered = [];
+  let headingIcon = "";
+  let headingText = "";
+  const allTalks = getAllTalks();
 
-  const filtered = TALKS.filter(talk => talk.stream === currentStream);
+  if(searchQuery){
+    const q = searchQuery.trim().toLowerCase();
+    filtered = allTalks.filter(talk=>{
+      const title = (talk.title[lang3] || talk.title.en).toLowerCase();
+      const titleEn = talk.title.en.toLowerCase();
+      const speaker = talk.speaker.toLowerCase();
+      const desc = (talk.desc[lang3] || talk.desc.en).toLowerCase();
+      return title.includes(q) || titleEn.includes(q) || speaker.includes(q) || desc.includes(q);
+    });
+    headingIcon = "🔍";
+    headingText = `${t.searchResultsFor} "${searchQuery}"`;
+  } else if(currentStream === "saved"){
+    const marks = getBookmarks();
+    filtered = allTalks.filter(talk=> marks.includes(talk.id));
+    headingIcon = "🔖";
+    headingText = t.streamSaved;
+  } else {
+    filtered = allTalks.filter(talk => talk.stream === currentStream);
+    headingIcon = STREAM_ICONS[currentStream];
+    headingText = t[STREAM_NAME_KEY[currentStream]];
+  }
+
+  document.getElementById("talksEyebrow").textContent = headingIcon + " " + headingText;
+  document.getElementById("talksTitle").textContent = headingText;
+
+  if(filtered.length === 0){
+    const msg = document.createElement("p");
+    msg.className = "empty-msg";
+    msg.textContent = (searchQuery ? t.noResults : t.noSaved);
+    grid.appendChild(msg);
+    return;
+  }
 
   filtered.forEach(talk=>{
-    const lang3 = ["en","hi","mr"].includes(currentLang) ? currentLang : "en";
     const title = talk.title[lang3] || talk.title.en;
     const desc = talk.desc[lang3] || talk.desc.en;
 
     const card = document.createElement("article");
     card.className = "ticket";
-    const tedSlug = talk.url.replace("https://www.ted.com/talks/", "");
-    const embedSrc = talk.yt
-      ? `https://www.youtube.com/embed/${talk.yt}?autoplay=1`
-      : `https://embed.ted.com/talks/${tedSlug}`;
+    const youtubeUrl = `https://www.youtube.com/watch?v=${talk.yt}`;
+    const saved = isBookmarked(talk.id);
 
     card.innerHTML = `
       <div class="stub">
@@ -607,35 +823,43 @@ function renderGrid(){
           <span class="meta-tag">HI</span>
           <span class="meta-tag">MR</span>
         </div>
-        <button class="play-btn" type="button">
-          <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
-          ${t.playBtn}
-        </button>
-        <div class="inline-player">
-          <iframe loading="lazy" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        <div class="actions">
+          <a class="play-btn" href="${youtubeUrl}" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+            ${t.playBtn}
+          </a>
+          <button class="icon-btn save-btn ${saved ? "active" : ""}" type="button" title="${saved ? t.savedBtn : t.saveBtn}">
+            ${saved ? "★" : "☆"}
+          </button>
+          <button class="icon-btn share-btn" type="button" title="${t.shareBtn}">🔗</button>
         </div>
-        <div class="player-note" style="display:none;">
-          ${t.playerNote} <a href="${talk.url}" target="_blank" rel="noopener">TED.com →</a>
-        </div>
+        <div class="copy-note" style="display:none;">${t.copiedMsg}</div>
       </div>
     `;
 
-    const btn = card.querySelector(".play-btn");
-    const playerWrap = card.querySelector(".inline-player");
-    const iframe = card.querySelector("iframe");
-    const note = card.querySelector(".player-note");
+    const saveBtn = card.querySelector(".save-btn");
+    saveBtn.addEventListener("click", ()=>{
+      toggleBookmark(talk.id);
+      const nowSaved = isBookmarked(talk.id);
+      saveBtn.classList.toggle("active", nowSaved);
+      saveBtn.textContent = nowSaved ? "★" : "☆";
+      saveBtn.title = nowSaved ? t.savedBtn : t.saveBtn;
+      if(currentStream === "saved" && !nowSaved){
+        renderGrid();
+      }
+    });
 
-    btn.addEventListener("click", ()=>{
-      if(!playerWrap.classList.contains("open")){
-        iframe.src = embedSrc;
-        playerWrap.classList.add("open");
-        note.style.display = "block";
-        btn.querySelector("svg").outerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12"><rect x="5" y="3" width="4" height="18"/><rect x="15" y="3" width="4" height="18"/></svg>';
-      } else {
-        playerWrap.classList.remove("open");
-        iframe.src = "";
-        note.style.display = "none";
-        btn.querySelector("svg").outerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12"><polygon points="5,3 19,12 5,21"/></svg>';
+    const shareBtn = card.querySelector(".share-btn");
+    const copyNote = card.querySelector(".copy-note");
+    shareBtn.addEventListener("click", ()=>{
+      const shareData = { title: title, text: talk.speaker, url: youtubeUrl };
+      if(navigator.share){
+        navigator.share(shareData).catch(()=>{});
+      } else if(navigator.clipboard){
+        navigator.clipboard.writeText(youtubeUrl).then(()=>{
+          copyNote.style.display = "block";
+          setTimeout(()=>{ copyNote.style.display = "none"; }, 1800);
+        });
       }
     });
 
@@ -649,11 +873,186 @@ document.getElementById("langSelect").addEventListener("change", e=>{
   applyI18n();
 });
 
+document.getElementById("searchInput").addEventListener("input", e=>{
+  searchQuery = e.target.value;
+  if(searchQuery){
+    currentStream = null;
+    renderStreamList();
+    renderGrid();
+    document.getElementById("talksSection").style.display = "block";
+  } else {
+    document.getElementById("talksSection").style.display = "none";
+    renderStreamList();
+  }
+});
+
 document.getElementById("backBtn").addEventListener("click", ()=>{
   currentStream = null;
+  searchQuery = "";
+  document.getElementById("searchInput").value = "";
   document.getElementById("talksSection").style.display = "none";
   renderStreamList();
   document.getElementById("streamList").scrollIntoView({behavior:"smooth", block:"start"});
+});
+
+/* ===================== ADMIN CONSOLE ===================== */
+const adminToggle = document.getElementById("adminToggle");
+const studentView = document.getElementById("studentView");
+const adminView = document.getElementById("adminView");
+let adminOpen = false;
+
+adminToggle.addEventListener("click", ()=>{
+  adminOpen = !adminOpen;
+  studentView.style.display = adminOpen ? "none" : "block";
+  adminView.style.display = adminOpen ? "block" : "none";
+  const t = I18N[currentLang];
+  adminToggle.innerHTML = adminOpen
+    ? `← ${t.studentLink}`
+    : `⚙ ${t.adminLink}`;
+  if(adminOpen){
+    populateAdminSelectors();
+    renderStats();
+    renderAdminTalkList();
+    window.scrollTo({top:0, behavior:"smooth"});
+  }
+});
+
+function populateAdminSelectors(){
+  const t = I18N[currentLang];
+  const streamSel = document.getElementById("aStream");
+  const qrSel = document.getElementById("qrScope");
+  streamSel.innerHTML = "";
+  qrSel.innerHTML = "";
+
+  STREAM_KEYS.forEach(stream=>{
+    const opt = document.createElement("option");
+    opt.value = stream;
+    opt.textContent = `${STREAM_ICONS[stream]} ${t[STREAM_NAME_KEY[stream]]}`;
+    streamSel.appendChild(opt);
+  });
+
+  const globalOpt = document.createElement("option");
+  globalOpt.value = "global";
+  globalOpt.textContent = "🌐 " + t.qrGlobal;
+  qrSel.appendChild(globalOpt);
+
+  STREAM_KEYS.forEach(stream=>{
+    const opt = document.createElement("option");
+    opt.value = "stream:" + stream;
+    opt.textContent = `${t.qrStreamPrefix} ${STREAM_ICONS[stream]} ${t[STREAM_NAME_KEY[stream]]}`;
+    qrSel.appendChild(opt);
+  });
+}
+
+function renderStats(){
+  const all = getAllTalks();
+  const adminCount = getAdminTalks().length;
+  document.getElementById("statListeners").textContent = (187987 + adminCount * 134).toLocaleString("en-IN");
+  document.getElementById("statModules").textContent = all.length.toLocaleString("en-IN");
+  document.getElementById("statQR").textContent = (29481 + adminCount * 7).toLocaleString("en-IN");
+  document.getElementById("statTokens").textContent = "4.2M";
+}
+
+function extractYoutubeId(input){
+  input = input.trim();
+  if(/^[a-zA-Z0-9_-]{11}$/.test(input)) return input;
+  const m = input.match(/(?:youtu\.be\/|v=|\/embed\/|\/shorts\/)([a-zA-Z0-9_-]{11})/);
+  return m ? m[1] : null;
+}
+
+function renderAdminTalkList(){
+  const t = I18N[currentLang];
+  const wrap = document.getElementById("adminTalkList");
+  const adminTalks = getAdminTalks();
+  wrap.innerHTML = "";
+  if(adminTalks.length === 0){
+    wrap.innerHTML = `<div class="admin-empty">${t.adminEmpty}</div>`;
+    return;
+  }
+  adminTalks.forEach(talk=>{
+    const row = document.createElement("div");
+    row.className = "admin-talk-row";
+    row.innerHTML = `
+      <div class="at-info">
+        <div class="at-title">${talk.title.en}</div>
+        <div class="at-meta">${STREAM_ICONS[talk.stream] || ""} ${t[STREAM_NAME_KEY[talk.stream]] || talk.stream} · ${talk.speaker} · ${talk.duration} ${t.min}</div>
+      </div>
+      <button type="button">${t.removeBtn}</button>
+    `;
+    row.querySelector("button").addEventListener("click", ()=>{
+      const updated = getAdminTalks().filter(x=>x.id !== talk.id);
+      saveAdminTalks(updated);
+      renderAdminTalkList();
+      renderStats();
+      renderStreamList();
+      if(currentStream || searchQuery) renderGrid();
+    });
+    wrap.appendChild(row);
+  });
+}
+
+document.getElementById("deployBtn").addEventListener("click", ()=>{
+  const t = I18N[currentLang];
+  const title = document.getElementById("aTitle").value.trim();
+  const speaker = document.getElementById("aSpeaker").value.trim();
+  const stream = document.getElementById("aStream").value;
+  const lang = document.getElementById("aLang").value;
+  const duration = parseInt(document.getElementById("aDuration").value, 10) || 10;
+  const ytRaw = document.getElementById("aYoutube").value.trim();
+  const desc = document.getElementById("aDesc").value.trim();
+  const note = document.getElementById("deployNote");
+
+  const ytId = extractYoutubeId(ytRaw);
+
+  if(!title || !speaker || !ytId){
+    note.textContent = "⚠ " + t.deployError;
+    note.style.color = "#c0392b";
+    note.style.display = "block";
+    return;
+  }
+
+  const adminTalks = getAdminTalks();
+  const newTalk = {
+    id: 1000 + adminTalks.length + Math.floor(Math.random()*1000),
+    stream: stream,
+    speaker: speaker,
+    duration: duration,
+    title: { en:title, hi:title, mr:title },
+    desc: { en:desc || "—", hi:desc || "—", mr:desc || "—" },
+    url: `https://www.youtube.com/watch?v=${ytId}`,
+    yt: ytId,
+    lang: lang
+  };
+  adminTalks.push(newTalk);
+  saveAdminTalks(adminTalks);
+
+  note.textContent = t.deployedMsg;
+  note.style.color = "var(--sage)";
+  note.style.display = "block";
+
+  document.getElementById("aTitle").value = "";
+  document.getElementById("aSpeaker").value = "";
+  document.getElementById("aYoutube").value = "";
+  document.getElementById("aDesc").value = "";
+  document.getElementById("aDuration").value = "10";
+
+  renderAdminTalkList();
+  renderStats();
+  renderStreamList();
+  if(currentStream || searchQuery) renderGrid();
+});
+
+document.getElementById("qrGenBtn").addEventListener("click", ()=>{
+  const t = I18N[currentLang];
+  const scope = document.getElementById("qrScope").value;
+  const base = (location.href.split("#")[0]).split("?")[0];
+  let target = base;
+  if(scope.startsWith("stream:")){
+    target = base + "?stream=" + scope.split(":")[1];
+  }
+  const qrImg = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(target)}`;
+  const out = document.getElementById("qrOutput");
+  out.innerHTML = `<img src="${qrImg}" alt="QR code" /><div class="qr-link">${target}</div>`;
 });
 
 /* init */
